@@ -8,10 +8,11 @@ export default function LogIn() {
   const onSubmit = async (data) => {
     try {
       const user = await login(data);
-      localStorage.setItem('token', user.token);
+      console.log(user);
+      localStorage.setItem('token', user.accessToken);
       navigate('/products');
     } catch (error) {
-      alert("Login failed"+error.message)
+      alert(error.message)
     }
     console.log(data);
   }

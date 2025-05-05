@@ -10,7 +10,7 @@ export default function SignUp() {
       await signUp(data);
       navigate('/login');
     } catch (error) {
-      alert("Signup failed: "+error.message);
+      alert(error.message);
     }
     console.log(data);
   }
