@@ -31,30 +31,17 @@ export default function AuthForm({ onSubmit, type }) {
       name: "email",
       validation: {
         pattern: {
-          value: /^[a-zA-Z0-9._-]+@unisabana\.edu\.co/,
+          value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
           message: 'Please enter a valid email address'
         }
       }  
     },
     {
-      name: "id",
-      validation: {
-        pattern: {
-          value: /^0000\d{6}$/,
-          message: 'Use a valid ID'
-        }
-      }
-    },
-    {
       name: "password",
       validation: {
         minLength: {
-          value: 8,
-          message: 'Password must be at least 8 characters long'
-        },
-        maxLength: {
-          value: 20,
-          message: 'Password must be no longer than 20 characters'
+          value: 6,
+          message: 'Password must be at least 6 characters long'
         }
       }
     }
@@ -62,7 +49,7 @@ export default function AuthForm({ onSubmit, type }) {
 
   const filteredFields = isSignup ? 
     fields : 
-    fields.filter(field => field.name !== "name" && field.name !== "lastName" && field.name !== "id");
+    fields.filter(field => field.name !== "name" && field.name !== "lastName");
 
   return (
   <form 
@@ -72,9 +59,10 @@ export default function AuthForm({ onSubmit, type }) {
     <h2 className='text-dark-blue text-3xl font-bold'>{type}</h2>
     {filteredFields.map((field) => (
       <Input
+      key={field.name}
       {...register(field.name, 
         {
-          required: "This field is required",
+          ...(field.name !== "lastName" && {required: "This field is required"}),
           ...field.validation
         }
       )}
