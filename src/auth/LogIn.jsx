@@ -7,14 +7,12 @@ export default function LogIn() {
 
   const onSubmit = async (data) => {
     try {
-      const user = await login(data);
-      console.log(user);
-      localStorage.setItem('token', user.accessToken);
+      const response = await login(data);
+      localStorage.setItem('accessToken', response.accessToken);
       navigate('/products');
     } catch (error) {
       alert(error.message)
     }
-    console.log(data);
   }
 
   return <AuthForm onSubmit={onSubmit} type="Log In"/>;
