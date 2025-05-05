@@ -1,4 +1,4 @@
-const API = "https://back-db-parra-purmessur.vercel.app/api";
+const API = "https://back-db.vercel.app/api";
 
 export async function signUp(data) {
   const res = await fetch(`${API}/users`, {
