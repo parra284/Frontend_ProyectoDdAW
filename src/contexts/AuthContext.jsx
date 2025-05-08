@@ -1,5 +1,5 @@
-import { createContext, useContext, useState, useEffect } from "react";
-import jwtDecode from "jwt-decode"; 
+import { createContext, useContext, useState } from "react";
+import { jwtDecode } from "jwt-decode"; 
 
 // Create the AuthContext
 const AuthContext = createContext();
@@ -7,20 +7,6 @@ const AuthContext = createContext();
 // AuthProvider component to wrap your app
 export function AuthProvider({ children }) {
   const [auth, setAuth] = useState(null);
-
-  // Load authentication data from localStorage on mount
-  useEffect(() => {
-    const token = localStorage.getItem("accessToken");
-    if (token) {
-      try {
-        const decoded = jwtDecode(token); // Decode the token to get user info
-        setAuth({ ...decoded, token });
-      } catch (error) {
-        console.error("Invalid token:", error);
-        localStorage.removeItem("accessToken"); // Clear invalid token
-      }
-    }
-  }, []);
 
   // Function to log in and save auth data
   const login = (token) => {
@@ -41,6 +27,7 @@ export function AuthProvider({ children }) {
 
   return (
     <AuthContext.Provider value={{ auth, login, logout }}>
+      {console.log(auth)}
       {children}
     </AuthContext.Provider>
   );

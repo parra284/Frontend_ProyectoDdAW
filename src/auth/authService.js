@@ -11,7 +11,7 @@ export async function signUp(data) {
   return res.json();
 } 
 
-export async function login(data) {
+export async function loginService(data) {
   const res = await fetch(`${API}/auth/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
