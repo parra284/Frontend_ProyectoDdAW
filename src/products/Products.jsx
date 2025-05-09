@@ -2,24 +2,38 @@ import { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 
 export default function Products() {
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState([]); // Ensure products is initialized as an array
   const [searchQuery, setSearchQuery] = useState("");
   const [filters, setFilters] = useState({ category: "", availability: "", priceRange: "" });
+  const [error, setError] = useState(null); // Add error state
+  const [loading, setLoading] = useState(true); // Add loading state
 
   useEffect(() => {
-    // Fetch products from API (replace with actual API endpoint)
     const fetchProducts = async () => {
       try {
-        const response = await fetch("https://api.example.com/products");
+        setLoading(true);
+        const queryParams = new URLSearchParams({
+          category: filters.category,
+          availability: filters.availability,
+          priceRange: filters.priceRange,
+          keyword: searchQuery,
+        });
+        const response = await fetch(`https://back-db.vercel.app/api/products?${queryParams}`);
+        if (!response.ok) throw new Error(`Failed to fetch products: ${response.statusText}`);
         const data = await response.json();
-        setProducts(data);
-      } catch (error) {
-        console.error("Error fetching products:", error);
+        if (!Array.isArray(data.products)) throw new Error("Invalid data format");
+        setProducts(data.products);
+        setError(null);
+      } catch (err) {
+        console.error("Error fetching products:", err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchProducts();
-  }, []);
+  }, [filters, searchQuery]);
 
   const handleSearch = (e) => {
     setSearchQuery(e.target.value);
@@ -30,14 +44,60 @@ export default function Products() {
     setFilters((prevFilters) => ({ ...prevFilters, [name]: value }));
   };
 
-  const filteredProducts = products.filter((product) => {
+  const handleDelete = async (id) => {
+    const confirmDelete = window.confirm("Are you sure you want to delete this product?");
+    if (!confirmDelete) return;
+
+    try {
+      const response = await fetch(`https://back-db.vercel.app/api/products/${id}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) throw new Error("Failed to delete product");
+
+      // Log the deletion for audit purposes
+      console.log(`Product with ID ${id} has been deleted.`);
+
+      // Update the product list
+      setProducts((prevProducts) => prevProducts.filter((product) => product.id !== id));
+    } catch (err) {
+      console.error("Error deleting product:", err);
+      alert("Failed to delete product. Please try again.");
+    }
+  };
+
+  const filteredProducts = Array.isArray(products)
+    ? products.filter((product) => {
+        return (
+          product.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
+          (filters.category ? product.category === filters.category : true) &&
+          (filters.availability ? product.availability === filters.availability : true) &&
+          (filters.priceRange ? product.price <= filters.priceRange : true)
+        );
+      })
+    : [];
+
+  if (loading) {
     return (
-      product.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
-      (filters.category ? product.category === filters.category : true) &&
-      (filters.availability ? product.availability === filters.availability : true) &&
-      (filters.priceRange ? product.price <= filters.priceRange : true)
+      <div>
+        <Navbar />
+        <div className="p-4">
+          <p>Loading products...</p>
+        </div>
+      </div>
     );
-  });
+  }
+
+  if (error) {
+    return (
+      <div>
+        <Navbar />
+        <div className="p-4">
+          <p className="text-red-500">Error: {error}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -80,6 +140,13 @@ export default function Products() {
               <p>Category: {product.category}</p>
               <p>Price: ${product.price}</p>
               <p>Availability: {product.availability}</p>
+              <p>Location: {product.location}</p>
+              <button
+                className="mt-2 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700"
+                onClick={() => handleDelete(product.id)}
+              >
+                Delete
+              </button>
             </div>
           ))}
         </div>

@@ -11,9 +11,13 @@ export default function LogIn() {
       localStorage.setItem('accessToken', response.accessToken);
       navigate('/products');
     } catch (error) {
-      alert(error.message)
+      alert(error.message);
     }
-  }
+  };
 
-  return <AuthForm onSubmit={onSubmit} type="Log In"/>;
+  return (
+    <div className="bg-login min-h-screen bg-cover bg-center">
+      <AuthForm onSubmit={onSubmit} type="Log In" />
+    </div>
+  );
 }

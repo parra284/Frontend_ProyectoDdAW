@@ -13,7 +13,11 @@ export default function SignUp() {
       alert(error.message);
     }
     console.log(data);
-  }
+  };
 
-  return <AuthForm onSubmit={onSubmit} type="Sign Up"/>;
+  return (
+    <div className="bg-signup min-h-screen bg-cover bg-center">
+      <AuthForm onSubmit={onSubmit} type="Sign Up" />
+    </div>
+  );
 }

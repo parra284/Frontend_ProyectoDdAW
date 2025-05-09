@@ -1,5 +1,7 @@
-import { createContext, useContext, useState, useEffect } from "react";
-import jwtDecode from "jwt-decode"; 
+import { createContext, useState, useEffect } from "react";
+import { jwtDecode } from "jwt-decode"; // Use named import
+import { initializeMessaging } from '../firebase/messaging';
+import { isTokenExpired } from './authUtils';
 
 // Create the AuthContext
 const AuthContext = createContext();
@@ -8,35 +10,44 @@ const AuthContext = createContext();
 export function AuthProvider({ children }) {
   const [auth, setAuth] = useState(null);
 
-  // Load authentication data from localStorage on mount
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
     if (token) {
-      try {
-        const decoded = jwtDecode(token); // Decode the token to get user info
+      if (isTokenExpired(token)) {
+        localStorage.removeItem("accessToken");
+      } else {
+        const decoded = jwtDecode(token);
         setAuth({ ...decoded, token });
-      } catch (error) {
-        console.error("Invalid token:", error);
-        localStorage.removeItem("accessToken"); // Clear invalid token
       }
     }
   }, []);
 
-  // Function to log in and save auth data
+  useEffect(() => {
+    initializeMessaging();
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const token = localStorage.getItem("accessToken");
+      if (token && isTokenExpired(token)) {
+        logout();
+      }
+    }, 60000); // Check every 60 seconds
+
+    return () => clearInterval(interval);
+  }, []);
+
   const login = (token) => {
-    try {
-      const decoded = jwtDecode(token); // Decode the token to get user info
+    if (!isTokenExpired(token)) {
+      const decoded = jwtDecode(token);
       setAuth({ ...decoded, token });
-      localStorage.setItem("accessToken", token); // Save only the token
-    } catch (error) {
-      console.error("Invalid token:", error);
+      localStorage.setItem("accessToken", token);
     }
   };
 
-  // Function to log out and clear auth data
   const logout = () => {
     setAuth(null);
-    localStorage.removeItem("accessToken"); 
+    localStorage.removeItem("accessToken");
   };
 
   return (
@@ -46,7 +57,6 @@ export function AuthProvider({ children }) {
   );
 }
 
-// Custom hook to use the AuthContext
-export function useAuth() {
-  return useContext(AuthContext);
-}
+// Eliminar la exportación de `useAuth` para resolver el problema de Fast Refresh
+
+export default AuthContext;
