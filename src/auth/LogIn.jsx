@@ -1,11 +1,14 @@
 import { useNavigate } from "react-router-dom";
-import AuthForm from "./AuthForm";
-import { loginService } from "./authService";
 import { useAuth } from "../contexts/AuthContext";
+import AuthForm from "./AuthForm";
+import fields from "../utils/AuthFormFields";
+import { loginService } from "./authService";
 
 export default function LogIn() {
   const navigate = useNavigate();
   const { login } = useAuth();
+
+  const filteredFields = fields().filter(field => field.name !== "name" && field.name !== "lastName");
 
   const onSubmit = async (data) => {
     try {
@@ -17,5 +20,10 @@ export default function LogIn() {
     }
   }
 
-  return <AuthForm onSubmit={onSubmit} type="Log In"/>;
+  return <AuthForm
+  onSubmit={onSubmit} 
+  type="login"
+  fields={filteredFields}
+  message="Don't have an account?"
+  />;
 }

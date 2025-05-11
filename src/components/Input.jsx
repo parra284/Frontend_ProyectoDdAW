@@ -1,9 +1,5 @@
 import React from 'react';
-
-const transformPlaceholder = (name) =>{
-  let transformed = name.charAt(0).toUpperCase() + name.slice(1).replace(/([A-Z])/, ' $1');
-  return transformed
-}
+import transformText from '../utils/TransformText';
 
 const Input = React.forwardRef(({ error, ...props }, ref) => {
   const { name } = props;
@@ -14,7 +10,7 @@ const Input = React.forwardRef(({ error, ...props }, ref) => {
         className="bg-input p-2.5 rounded-lg w-100"
         ref={ref} 
         {...props}
-        placeholder={transformPlaceholder(name)}
+        placeholder={transformText(name)}
         type={name == "password" ? "password" : "text"}
       />
       {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
