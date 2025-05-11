@@ -1,7 +1,7 @@
 //NEEDED
 //ROLE BASED AND TOKEN REFRESH
 
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useState } from "react";
 import { jwtDecode } from "jwt-decode"; 
 
 // Create the AuthContext
@@ -19,19 +19,17 @@ export function AuthProvider({ children }) {
     return decoded;
   }
 
-  useEffect(() => {
-    const token = localStorage.getItem("accessToken");
-    if (token) {
-      login(token);
-    }
-  }, []);
-
   // Function to log in and save auth data
   const login = (token) => {
     try {
       const decoded = decodeToken(token);
       setAuth({ ...decoded, token });
       localStorage.setItem("accessToken", token); // Save only the token
+
+      const timeout = decoded.exp * 1000 - Date.now();
+      console.log(timeout);
+      
+      setTimeout(logout, timeout);
     } catch (error) {
       console.error("Invalid token:", error);
       logout();
@@ -46,7 +44,6 @@ export function AuthProvider({ children }) {
 
   return (
     <AuthContext.Provider value={{ auth, login, logout }}>
-      {console.log(auth)}
       {children}
     </AuthContext.Provider>
   );

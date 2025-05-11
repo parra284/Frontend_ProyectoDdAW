@@ -2,48 +2,39 @@ import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom"
 import ForbiddenAccess from './components/ForbiddenAccess'
 import SignUp from './auth/SignUp';
 import LogIn from './auth/LogIn';
-import Products from "./products/Products";
-import { useAuth } from "./contexts/AuthContext";
+import ProductsUser from './products/ProductsUser'
+import ProductsPOS from "./products/ProductsPOS";
+import ProtectedRoute from "./utils/ProtectedRoute";
 
 const routes = [
   { 
     path: '/', 
-    element: <Navigate to="/login" replace />,
-    auth: false
+    element: <Navigate to="/login" replace />
   },
   { 
     path: '/forbidden', 
-    element: <ForbiddenAccess />,
-    auth: false
+    element: <ForbiddenAccess />
   },
   { 
     path: '/signup', 
-    element: <SignUp />,
-    auth: false
+    element: <SignUp />
   },
   { 
     path: '/login', 
-    element: <LogIn />,
-    auth: false
+    element: <LogIn />
   },
   { 
     path: '/products', 
-    element: <Products />,
-    auth: true
+    element: <ProtectedRoute
+      roles={['user', 'POS']}
+      userComponent={<ProductsUser />}
+      posComponent={<ProductsPOS />}
+    />
   },
 ]
 
 export default function Router() {
-  const { auth } = useAuth();
+  const router = createBrowserRouter(routes);
 
-  const router = createBrowserRouter(
-    routes.map((route) => {
-      if (route.auth && !auth) {
-        return { ...route, element: <Navigate to="/forbidden" replace />};
-      }
-      return route;
-    })  
-  );
-
-    return <RouterProvider router={router} />;
+  return <RouterProvider router={router} />;
 }
