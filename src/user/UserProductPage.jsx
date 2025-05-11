@@ -72,7 +72,8 @@ const UserProductPage = () => {
 
       <p className="mb-4">Total Items: {products.length}</p>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      {/* Updated grid layout for responsiveness */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {products.map((product) => (
           <div key={product.id} className="border p-4 rounded">
             <img src={product.image} alt={product.name} className="w-full h-32 object-cover mb-2" />

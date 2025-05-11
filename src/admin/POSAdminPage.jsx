@@ -25,7 +25,7 @@ export default function POSAdminPage() {
 
   const handleUpdate = async (id, updatedProduct) => {
     try {
-      const response = await axios.put(`http://localhost:5000/api/products/${id}`, updatedProduct);
+      const response = await axios.put(`https://back-db.vercel.app/api/products/${id}`, updatedProduct);
       if (response.status === 200) {
         alert('Product updated successfully!');
         setProducts((prevProducts) =>
@@ -94,7 +94,8 @@ export default function POSAdminPage() {
         {/* Main Content */}
         <div className="w-3/4 p-4">
           <h1 className="text-2xl font-bold mb-4">Products</h1>
-          <div className="grid grid-cols-2 gap-4">
+          {/* Updated grid layout for responsiveness */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {paginatedProducts.map((product) => (
               <div key={product.id} className="border p-4 rounded shadow">
                 <img src={product.image} alt={product.name} className="w-full h-32 object-cover rounded" />

@@ -17,7 +17,7 @@ export default function Navbar() {
   };
 
   return (
-    <div className="bg-gradient-to-r from-blue-500 to-purple-600 shadow-lg h-15 flex items-center justify-between px-4">
+    <div className="bg-gradient-to-r from-blue-500 to-purple-600 shadow-lg h-15 flex items-center justify-between px-4" role="navigation" aria-label="Main Navigation">
       <button
         className="text-white font-semibold focus:outline-none focus:ring-2 focus:ring-white hover:text-gray-200"
         onClick={toggleModal}

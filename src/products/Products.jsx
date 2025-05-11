@@ -53,13 +53,13 @@ export default function Products() {
         method: "DELETE",
       });
 
-      if (!response.ok) throw new Error("Failed to delete product");
+      if (!response.ok) {
+        throw new Error("Failed to delete product");
+      }
 
-      // Log the deletion for audit purposes
-      console.log(`Product with ID ${id} has been deleted.`);
-
-      // Update the product list
       setProducts((prevProducts) => prevProducts.filter((product) => product.id !== id));
+
+      alert("Product deleted successfully!");
     } catch (err) {
       console.error("Error deleting product:", err);
       alert("Failed to delete product. Please try again.");
@@ -133,6 +133,7 @@ export default function Products() {
           </select>
         </div>
 
+        {/* Updated grid layout for responsiveness */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredProducts.map((product) => (
             <div key={product.id} className="border p-4 rounded">

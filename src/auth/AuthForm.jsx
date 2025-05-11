@@ -58,8 +58,9 @@ export default function AuthForm({ onSubmit, type }) {
       <form
         className='flex flex-col items-center justify-around w-full max-w-md p-4 bg-white bg-opacity-90 rounded-lg shadow-md'
         onSubmit={handleSubmit(onSubmit)}
+        aria-labelledby="form-title"
       >
-        <h2 className='text-dark-blue text-3xl font-bold'>{type}</h2>
+        <h2 id="form-title" className='text-dark-blue text-3xl font-bold'>{type}</h2>
         {filteredFields.map((field) => (
           <Input
             key={field.name}
@@ -70,6 +71,8 @@ export default function AuthForm({ onSubmit, type }) {
               }
             )}
             error={errors[field.name]?.message}
+            aria-invalid={!!errors[field.name]}
+            aria-describedby={`${field.name}-error`}
           />
         ))}
 

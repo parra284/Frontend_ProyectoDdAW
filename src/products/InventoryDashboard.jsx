@@ -36,16 +36,18 @@ export default function InventoryDashboard() {
   }, []);
 
   const handleDelete = async (id) => {
+    const confirmDelete = window.confirm("Are you sure you want to delete this product?");
+    if (!confirmDelete) return;
+
     try {
       const response = await fetch(`https://back-db.vercel.app/api/products/${id}`, {
         method: "DELETE",
       });
 
       if (!response.ok) {
-        throw new Error("Failed to delete product.");
+        throw new Error("Failed to delete product");
       }
 
-      // Remove the deleted product from the state
       setProducts((prevProducts) => prevProducts.filter((product) => product.id !== id));
 
       alert("Product deleted successfully!");
@@ -56,7 +58,7 @@ export default function InventoryDashboard() {
   };
 
   const handleProductAdded = (newProduct) => {
-    setProducts((prevProducts) => [...prevProducts, newProduct]);
+    setProducts((prevProducts) => [newProduct, ...prevProducts]);
   };
 
   const handleEditClick = (product) => {
@@ -98,7 +100,7 @@ export default function InventoryDashboard() {
     return (
       <div>
         <Navbar />
-        <div className="p-4">
+        <div className="p-4" role="status" aria-live="polite">
           <p>Loading inventory...</p>
         </div>
       </div>
@@ -109,7 +111,7 @@ export default function InventoryDashboard() {
     return (
       <div>
         <Navbar />
-        <div className="p-4">
+        <div className="p-4" role="alert">
           <p className="text-red-500">Error: {error}</p>
         </div>
       </div>
@@ -124,6 +126,7 @@ export default function InventoryDashboard() {
         <button
           className="mb-4 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700"
           onClick={() => setShowForm((prev) => !prev)}
+          aria-expanded={showForm}
         >
           {showForm ? "Hide Form" : "Add New Product"}
         </button>
@@ -151,6 +154,7 @@ export default function InventoryDashboard() {
                       value={updatedValues.price}
                       onChange={handleInputChange}
                       className="border p-1 rounded w-full"
+                      aria-label="Edit price"
                     />
                   ) : (
                     `$${product.price}`
@@ -164,6 +168,7 @@ export default function InventoryDashboard() {
                       value={updatedValues.stock}
                       onChange={handleInputChange}
                       className="border p-1 rounded w-full"
+                      aria-label="Edit stock"
                     />
                   ) : (
                     product.stock
@@ -173,7 +178,7 @@ export default function InventoryDashboard() {
                   {editingProduct?.id === product.id ? (
                     <div>
                       <button
-                        onClick={handleSave}
+                        onClick={() => handleSave(product.id)}
                         className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700"
                       >
                         Save

@@ -10,7 +10,7 @@ export default function ForbiddenAccess() {
   }, [navigate]);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen">
+    <div className="flex flex-col items-center justify-center min-h-screen" role="alert" aria-live="assertive">
       <h1 className="text-red-500 text-3xl font-bold">Forbidden Access</h1>
       <p className="text-gray-700 text-lg">You do not have permission to access this resource.</p>
     </div>
