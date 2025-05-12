@@ -1,7 +1,7 @@
 import { useForm } from 'react-hook-form';
 import Input from '../components/Input';
 import Button from '../components/Button';
-import transformText from '../utils/TransformText';
+import transformText from '../utils/transformText';
 
 export default function AuthForm({ onSubmit, type, fields, message, link }) {
   const { register, handleSubmit, formState: { errors } } = useForm();
