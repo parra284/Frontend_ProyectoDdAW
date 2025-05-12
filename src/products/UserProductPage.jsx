@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import Navbar from '../components/Navbar';
 
 const UserProductPage = () => {
   const [products, setProducts] = useState([]);
@@ -47,7 +48,9 @@ const UserProductPage = () => {
   };
 
   return (
+
     <div className="p-4">
+      <Navbar />
       <header className="flex justify-between items-center mb-4">
         <h1 className="text-xl font-bold">Products</h1>
         <button

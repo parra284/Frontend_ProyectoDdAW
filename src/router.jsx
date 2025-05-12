@@ -2,9 +2,7 @@ import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom"
 import SignUp from './auth/SignUp';
 import LogIn from './auth/LogIn';
 import ForbiddenAccess from './auth/ForbiddenAccess';
-import Products from "./products/Products";
-import InventoryDashboard from "./products/InventoryDashboard";
-import POSAdminPage from './admin/POSAdminPage';
+import POSAdminPage from './products/POSAdminPage';
 import UserProductPage from './products/UserProductPage';
 import ProtectedRoute from "./auth/ProtectedRoute";
 
@@ -14,13 +12,12 @@ const routes = [
   { path: '/login', element: <LogIn /> },
   { 
     path: '/products', 
-    element: <ProtectedRoute element={<Products />} roles={['POS']}/> 
+    element: <ProtectedRoute element={<POSAdminPage />} roles={['POS']}/> 
   },
   { 
     path: '/products/user', 
     element: <ProtectedRoute element={<UserProductPage />} roles={['user']}/> 
   },
-  { path: '/inventory', element: <InventoryDashboard /> },
   { path: '/admin', element: <POSAdminPage /> },
   { path: '/forbidden', element: <ForbiddenAccess /> }
 ]
