@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import AuthForm from "./AuthForm";
 import { signUp } from "./authService";
+import { fields } from "../utils/formFields";
 
 export default function SignUp() {
   const navigate = useNavigate();
@@ -17,7 +18,13 @@ export default function SignUp() {
 
   return (
     <div className="bg-signup min-h-screen bg-cover bg-center">
-      <AuthForm onSubmit={onSubmit} type="Sign Up" />
+      <AuthForm
+      onSubmit={onSubmit} 
+      type="Sign Up" 
+      fields={fields}
+      message='Already have an account?'
+      link="login"
+      />
     </div>
   );
 }

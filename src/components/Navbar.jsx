@@ -15,7 +15,7 @@ export default function Navbar() {
   };
 
   return (
-    <div className="bg-gradient-to-r from-blue-500 to-purple-600 shadow-lg h-15 flex items-center justify-between px-4" role="navigation" aria-label="Main Navigation">
+    <div className="bg-dark-blue h-15 flex items-center justify-between px-4" role="navigation" aria-label="Main Navigation">
       <button
         className="text-white font-semibold focus:outline-none focus:ring-2 focus:ring-white hover:text-gray-200"
         onClick={toggleModal}
@@ -28,7 +28,7 @@ export default function Navbar() {
       {isModalOpen && (
         <div
           id="profile-modal"
-          className="fixed top-10 flex flex-col justify-center items-center border-2 border-white rounded bg-gradient-to-r from-blue-500 to-purple-600 p-10 shadow-md"
+          className="fixed top-10 flex flex-col justify-center items-center border-2 border-white rounded bg-gradient-to-r from-blue-500 to-dark-blue p-10 shadow-md"
           role="dialog"
           aria-labelledby="profile-title"
           aria-describedby="profile-description"

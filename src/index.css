@@ -1,5 +1,10 @@
 @import "tailwindcss";
 
+@theme {
+  --color-dark-blue: #001C64;
+  --color-gray: #D9D9D9;
+}
+
 /* Add custom background styles for Log In and Sign Up */
 .bg-login {
     background-image: url('./assets/1.jpg');
