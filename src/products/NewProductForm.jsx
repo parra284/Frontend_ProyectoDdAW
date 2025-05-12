@@ -69,67 +69,89 @@ export default function NewProductForm({ onProductAdded }) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="p-4 border rounded bg-white shadow-md">
-      <h2 className="text-xl font-bold mb-4">Add New Product</h2>
+    <form onSubmit={handleSubmit} className="p-4 sm:p-6 md:p-8 border rounded-lg bg-white shadow-md max-w-md sm:max-w-lg mx-auto">
+      <h2 className="text-lg sm:text-xl md:text-2xl font-bold mb-4 sm:mb-6 text-gray-800">Add New Product</h2>
+      
       {Object.values(error).some((errMsg) => errMsg) && (
-        <p className="text-red-500 mb-4">Please fix the errors below.</p>
+        <div className="bg-red-50 border-l-4 border-red-500 p-3 mb-5 rounded">
+          <p className="text-red-700 text-sm sm:text-base">Please fix the errors below.</p>
+        </div>
       )}
-      <div className="mb-4">
-        <label className="block mb-1">Product Name</label>
-        <input
-          type="text"
-          name="name"
-          value={formData.name}
-          onChange={handleChange}
-          className="border p-2 rounded w-full"
-        />
-        {error.name && <p className="text-red-500 text-sm">{error.name}</p>}
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        <div>
+          <label className="block mb-1 text-sm sm:text-base font-medium text-gray-700">Product Name</label>
+          <input
+            type="text"
+            name="name"
+            value={formData.name}
+            onChange={handleChange}
+            className="w-full p-2 sm:p-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-300 focus:border-blue-300"
+          />
+          {error.name && <p className="text-red-500 text-xs sm:text-sm mt-1">{error.name}</p>}
+        </div>
+        
+        <div>
+          <label className="block mb-1 text-sm sm:text-base font-medium text-gray-700">SKU</label>
+          <input
+            type="text"
+            name="sku"
+            value={formData.sku}
+            onChange={handleChange}
+            className="w-full p-2 sm:p-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-300 focus:border-blue-300"
+          />
+          {error.sku && <p className="text-red-500 text-xs sm:text-sm mt-1">{error.sku}</p>}
+        </div>
       </div>
-      <div className="mb-4">
-        <label className="block mb-1">SKU</label>
-        <input
-          type="text"
-          name="sku"
-          value={formData.sku}
-          onChange={handleChange}
-          className="border p-2 rounded w-full"
-        />
-        {error.sku && <p className="text-red-500 text-sm">{error.sku}</p>}
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        <div>
+          <label className="block mb-1 text-sm sm:text-base font-medium text-gray-700">Price</label>
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <span className="text-gray-500 sm:text-sm">$</span>
+            </div>
+            <input
+              type="number"
+              name="price"
+              value={formData.price}
+              onChange={handleChange}
+              className="w-full pl-7 p-2 sm:p-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-300 focus:border-blue-300"
+              step="0.01"
+            />
+          </div>
+          {error.price && <p className="text-red-500 text-xs sm:text-sm mt-1">{error.price}</p>}
+        </div>
+        
+        <div>
+          <label className="block mb-1 text-sm sm:text-base font-medium text-gray-700">Stock</label>
+          <input
+            type="number"
+            name="stock"
+            value={formData.stock}
+            onChange={handleChange}
+            className="w-full p-2 sm:p-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-300 focus:border-blue-300"
+          />
+          {error.stock && <p className="text-red-500 text-xs sm:text-sm mt-1">{error.stock}</p>}
+        </div>
       </div>
-      <div className="mb-4">
-        <label className="block mb-1">Price</label>
-        <input
-          type="number"
-          name="price"
-          value={formData.price}
-          onChange={handleChange}
-          className="border p-2 rounded w-full"
-        />
-        {error.price && <p className="text-red-500 text-sm">{error.price}</p>}
-      </div>
-      <div className="mb-4">
-        <label className="block mb-1">Stock</label>
-        <input
-          type="number"
-          name="stock"
-          value={formData.stock}
-          onChange={handleChange}
-          className="border p-2 rounded w-full"
-        />
-        {error.stock && <p className="text-red-500 text-sm">{error.stock}</p>}
-      </div>
-      <div className="mb-4">
-        <label className="block mb-1">Category</label>
+      
+      <div className="mb-6">
+        <label className="block mb-1 text-sm sm:text-base font-medium text-gray-700">Category</label>
         <input
           type="text"
           name="category"
           value={formData.category}
           onChange={handleChange}
-          className="border p-2 rounded w-full"
+          className="w-full p-2 sm:p-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-300 focus:border-blue-300"
         />
-        {error.category && <p className="text-red-500 text-sm">{error.category}</p>}
+        {error.category && <p className="text-red-500 text-xs sm:text-sm mt-1">{error.category}</p>}
       </div>
-      <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700">
+      
+      <button 
+        type="submit" 
+        className="w-full sm:w-auto bg-blue-500 text-white px-4 py-2 sm:px-6 sm:py-3 rounded-md hover:bg-blue-700 transition duration-200 font-medium focus:outline-none focus:ring-2 focus:ring-blue-400"
+      >
         Add Product
       </button>
     </form>

@@ -4,7 +4,11 @@ import LogIn from './auth/LogIn';
 import ForbiddenAccess from './auth/ForbiddenAccess';
 import POSAdminPage from './products/POSAdminPage';
 import UserProductPage from './products/UserProductPage';
+import InventoryDashboard from './products/InventoryDashboard';
+import AuditLogPage from './products/AuditLogPage';
 import ProtectedRoute from "./auth/ProtectedRoute";
+import ResponsiveDemo from "./components/ResponsiveDemo";
+import NotificationSystem from "./components/NotificationSystem";
 
 const routes = [
   { path: '/', element: <Navigate to="/login" replace /> },
@@ -17,13 +21,20 @@ const routes = [
   { 
     path: '/products/user', 
     element: <ProtectedRoute element={<UserProductPage />} roles={['user']}/> 
-  },
-  { path: '/admin', element: <POSAdminPage /> },
-  { path: '/forbidden', element: <ForbiddenAccess /> }
+  },  { path: '/admin', element: <POSAdminPage /> },
+  { path: '/forbidden', element: <ForbiddenAccess /> },
+  { path: '/responsive-demo', element: <ResponsiveDemo /> },
+  { path: '/inventory', element: <ProtectedRoute element={<InventoryDashboard />} roles={['POS']}/> },
+  { path: '/audit-logs', element: <ProtectedRoute element={<AuditLogPage />} roles={['POS', 'admin']}/> }
 ]
 
 const router = createBrowserRouter(routes);
 
 export default function Router() {
-    return <RouterProvider router={router} />;
+    return (
+        <>
+            <NotificationSystem position="bottom-right" />
+            <RouterProvider router={router} />
+        </>
+    );
 }
