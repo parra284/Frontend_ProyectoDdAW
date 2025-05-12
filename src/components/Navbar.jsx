@@ -1,19 +1,17 @@
 import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import AuthContext from '../contexts/AuthContext';
 
 export default function Navbar() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
-  const { logout } = useContext(AuthContext);
 
   const toggleModal = () => {
     setIsModalOpen(!isModalOpen);
   };
 
   const handleLogout = () => {
-    logout();
     navigate("/login");
+    localStorage.removeItem('accessToken');
   };
 
   return (

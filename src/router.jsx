@@ -6,17 +6,26 @@ import Products from "./products/Products";
 import InventoryDashboard from "./products/InventoryDashboard";
 import POSAdminPage from './admin/POSAdminPage';
 import UserProductPage from './user/UserProductPage';
+import ProtectedRoute from "./products/ProtectedRoute";
 
-const router = createBrowserRouter([
+const routes = [
   { path: '/', element: <Navigate to="/login" replace /> },
   { path: '/signup', element: <SignUp /> },
   { path: '/login', element: <LogIn /> },
-  { path: '/products', element: <Products /> },
-  { path: '/products/user', element: <UserProductPage /> },
-  { path: '/inventory', element: <InventoryDashboard /> }, // New route for inventory dashboard
+  { 
+    path: '/products', 
+    element: <ProtectedRoute element={<Products />} roles={['POS']}/> 
+  },
+  { 
+    path: '/products/user', 
+    element: <ProtectedRoute element={<UserProductPage />} roles={['user']}/> 
+  },
+  { path: '/inventory', element: <InventoryDashboard /> },
   { path: '/admin', element: <POSAdminPage /> },
-  { path: '/forbidden', element: <ForbiddenAccess /> },
-]);
+  { path: '/forbidden', element: <ForbiddenAccess /> }
+]
+
+const router = createBrowserRouter(routes);
 
 export default function Router() {
     return <RouterProvider router={router} />;
