@@ -10,7 +10,9 @@ const UserProductPage = () => {
     const fetchProducts = async () => {
       try {
         const response = await axios.get('https://back-db.vercel.app/api/products');
-        setProducts(response.data);
+        console.log(response);
+        
+        setProducts(response.data.products);
       } catch (err) {
         console.error('Error fetching products:', err);
       }

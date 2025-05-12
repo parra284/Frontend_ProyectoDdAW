@@ -33,7 +33,7 @@ export default function Products() {
     };
 
     fetchProducts();
-  }, [filters, searchQuery]);
+  }, [filters]);
 
   const handleSearch = (e) => {
     setSearchQuery(e.target.value);

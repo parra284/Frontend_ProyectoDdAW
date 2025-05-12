@@ -1,7 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import AuthForm from "./AuthForm";
 import { login } from "./authService";
-import { jwtDecode } from "jwt-decode";
 
 export default function LogIn() {
   const navigate = useNavigate();
@@ -10,9 +9,8 @@ export default function LogIn() {
     try {
       const response = await login(data);
       localStorage.setItem('accessToken', response.accessToken);
-      const user = localStorage.getItem('accessToken');
-      const role = jwtDecode(user).role;
-      console.log(role);
+      const role = response.user.role;
+      
       if (role === 'POS') {
         navigate('/products');
       }

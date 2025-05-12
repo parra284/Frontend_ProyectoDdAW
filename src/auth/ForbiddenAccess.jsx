@@ -5,6 +5,7 @@ export default function ForbiddenAccess() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    localStorage.removeItem('accessToken');
     const timer = setTimeout(() => navigate('/'), 3000); // Redirect to home after 3 seconds
     return () => clearTimeout(timer);
   }, [navigate]);
