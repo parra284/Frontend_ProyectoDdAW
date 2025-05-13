@@ -1,13 +1,19 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import Navbar from '../components/Navbar';
+import { getProducts, deleteProduct } from './productsService';
+import { useNavigate } from 'react-router-dom';
+import { getButtons } from '../utils/buttonsPOS';
 
 export default function POSAdminPage() {
+  const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [filters, setFilters] = useState({ category: '', availability: '', priceRange: '' });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const buttons = getButtons(navigate);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
@@ -21,11 +27,9 @@ export default function POSAdminPage() {
           priceRange: filters.priceRange,
           keyword: searchQuery,
         });
-        const response = await fetch(`https://back-db.vercel.app/api/products?${queryParams}`);
-        if (!response.ok) throw new Error(`Failed to fetch products: ${response.statusText}`);
-        const data = await response.json();
-        if (!Array.isArray(data.products)) throw new Error('Invalid data format');
-        setProducts(data.products);
+        const response = await getProducts(queryParams);
+        if (!Array.isArray(response.products)) throw new Error('Invalid response format');
+        setProducts(response.products);
         setError(null);
       } catch (err) {
         console.error('Error fetching products:', err);
@@ -36,7 +40,7 @@ export default function POSAdminPage() {
     };
 
     fetchProducts();
-  }, [filters]);
+  }, []);
 
   const handleSearch = (e) => {
     setSearchQuery(e.target.value);
@@ -52,16 +56,8 @@ export default function POSAdminPage() {
     if (!confirmDelete) return;
 
     try {
-      const response = await fetch(`https://back-db.vercel.app/api/products/${id}`, {
-        method: 'DELETE',
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to delete product');
-      }
-
+      await deleteProduct(id);
       setProducts((prevProducts) => prevProducts.filter((product) => product.id !== id));
-
       alert('Product deleted successfully!');
     } catch (err) {
       console.error('Error deleting product:', err);
@@ -105,7 +101,9 @@ export default function POSAdminPage() {
   if (loading) {
     return (
       <div>
-        <Navbar />
+        <Navbar 
+        buttons={buttons}
+        />
         <div className="p-4">
           <p>Loading products...</p>
         </div>
@@ -126,17 +124,7 @@ export default function POSAdminPage() {
 
   return (
     <div>
-      <Navbar />
-      <div className="flex flex-col">
-        {/* Header */}
-        <header className="bg-blue-600 text-white p-4 flex justify-between">
-          <h1 className="text-xl font-bold">POS Admin</h1>
-          <nav>
-            <button className="mr-4">Products</button>
-            <button>Orders</button>
-          </nav>
-        </header>
-
+      <Navbar buttons={buttons}/>
         <div className="flex">
           {/* Sidebar */}
           <div className="w-1/4 bg-blue-500 p-4 text-white">
@@ -254,6 +242,5 @@ export default function POSAdminPage() {
           </div>
         </div>
       </div>
-    </div>
   );
 }

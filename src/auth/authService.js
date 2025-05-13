@@ -1,4 +1,4 @@
-const API = "https://back-db.vercel.app/api";
+const API = import.meta.env.VITE_API_URL;
 
 export async function signUp(data) {
   const res = await fetch(`${API}/users`, {

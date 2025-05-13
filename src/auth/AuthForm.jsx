@@ -6,8 +6,6 @@ import transformText from '../utils/transformText';
 export default function AuthForm({ onSubmit, type, fields, message, link }) {
   const { register, handleSubmit, formState: { errors } } = useForm();
 
-  const isSignup = type === "Sign Up";
-
   return (
     <div
       className={'flex flex-col items-center justify-around min-h-screen bg-cover bg-center'}

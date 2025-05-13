@@ -5,6 +5,7 @@ import ForbiddenAccess from './auth/ForbiddenAccess';
 import ProtectedRoute from "./auth/ProtectedRoute";
 import ProductsPOS from './products/ProductsPOS';
 import ProductsUser from './products/ProductsUser';
+import Orders from "./orders/Orders";
 
 const routes = [
   { path: '/', element: <Navigate to="/login" replace /> },
@@ -13,6 +14,10 @@ const routes = [
   { 
     path: '/products', 
     element: <ProtectedRoute elements={[<ProductsPOS />, <ProductsUser/>]} roles={['POS','user']}/> 
+  },
+  {
+    path: '/orders',
+    element: <ProtectedRoute elements={<Orders />} roles={'POS'}/>
   },
   { path: '/forbidden', element: <ForbiddenAccess /> }
 ]

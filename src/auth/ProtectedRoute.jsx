@@ -22,7 +22,11 @@ export default function ProtectedRoute({ elements, roles }) {
   }
 
   // Find the index of the matching role
-  const index = roles ? roles.findIndex((role) => role === user.role) : -1;
+  const rolesArray = Array.isArray(roles) ? roles : [roles];
+  const elementsArray = Array.isArray(elements) ? elements : [elements];
+
+  // Find the index of the matching role
+  const index = rolesArray.findIndex((role) => role === user.role);
 
   if (index === -1) {
     // Redirect to forbidden if the user is not authorized
@@ -30,5 +34,5 @@ export default function ProtectedRoute({ elements, roles }) {
   }
 
   // Render the protected element if authorized
-  return elements[index];
+  return elementsArray[index];
 }

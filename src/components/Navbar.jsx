@@ -1,9 +1,10 @@
-import { useState, useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 
-export default function Navbar() {
+export default function Navbar( { buttons }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const toggleModal = () => {
     setIsModalOpen(!isModalOpen);
@@ -14,10 +15,29 @@ export default function Navbar() {
     localStorage.removeItem('accessToken');
   };
 
+  const handleButtonClick = (button) => {
+    button.action();
+  };
+
   return (
     <div className="bg-dark-blue h-15 flex items-center justify-between px-4" role="navigation" aria-label="Main Navigation">
+      {buttons && buttons.length > 0 && (
+        <div>
+          {buttons.map((button, index) => (
+            <button
+              key={index}
+              className={`text-white font-semibold hover:text-gray-200 m-5 ${
+                location.pathname === button.actionPath ? "underline" : ""
+              }`} // Add underline if selected
+              onClick={() => handleButtonClick(button)} // Update selected button on click
+            >
+              {button.label}
+            </button>
+          ))}
+        </div>
+      )}
       <button
-        className="text-white font-semibold focus:outline-none focus:ring-2 focus:ring-white hover:text-gray-200"
+        className="text-white font-semibold hover:text-gray-200 m-5"
         onClick={toggleModal}
         aria-expanded={isModalOpen}
         aria-controls="profile-modal"
@@ -28,7 +48,7 @@ export default function Navbar() {
       {isModalOpen && (
         <div
           id="profile-modal"
-          className="fixed top-10 flex flex-col justify-center items-center border-2 border-white rounded bg-gradient-to-r from-blue-500 to-dark-blue p-10 shadow-md"
+          className="fixed top-10 end-5 flex flex-col justify-center items-center border-2 border-white rounded bg-gradient-to-r from-blue-500 to-dark-blue p-10 shadow-md"
           role="dialog"
           aria-labelledby="profile-title"
           aria-describedby="profile-description"
