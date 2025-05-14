@@ -1,15 +1,22 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
-import Navbar from '../components/Navbar';
-import { getProducts, deleteProduct } from './productsService';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { getProducts, deleteProduct, createProduct, updateProduct } from './productsService';
 import { getButtons } from '../utils/buttonsPOS';
+import Navbar from '../components/Navbar';
+import Button from '../components/Button';
+import FilterField from '../components/FilterField';
+import { fields } from '../utils/filterFields';
+import ProductCard from './ProductCard';
+import NewProductForm from './NewProductForm';
 
 export default function POSAdminPage() {
   const navigate = useNavigate();
+
   const [products, setProducts] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [filters, setFilters] = useState({ category: '', availability: '', priceRange: '' });
+  const [actualModalType, setModalType] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -17,6 +24,7 @@ export default function POSAdminPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
+  //Getting every product (fix query params)
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -51,7 +59,36 @@ export default function POSAdminPage() {
     setFilters((prevFilters) => ({ ...prevFilters, [name]: value }));
   };
 
+  const handleAdd = async (newProduct) => {
+    //FIX
+
+    try {
+      await createProduct();
+      setProducts((prevProducts) => [...prevProducts, newProduct]);
+      alert('Product added successfully!');
+      setModalType('');
+    } catch (err) {
+      console.error('Error adding product:', err);
+      alert('Failed to add product. Please try again.');
+    }
+  };
+
+  const handleUpdate = async (id, updatedProduct) => {
+    //FIX
+    try {
+      await updateProduct(id, updatedProduct)
+      setProducts((prevProducts) =>
+        prevProducts.map((product) => (product.id === id ? { ...product, ...updatedProduct } : product))
+      );
+      setModalType('');
+    } catch (error) {
+      console.error('Error updating product:', error);
+      alert('Failed to update product. Please try again.');
+    }
+  };
+
   const handleDelete = async (id) => {
+    // FIX
     const confirmDelete = window.confirm('Are you sure you want to delete this product?');
     if (!confirmDelete) return;
 
@@ -62,21 +99,6 @@ export default function POSAdminPage() {
     } catch (err) {
       console.error('Error deleting product:', err);
       alert('Failed to delete product. Please try again.');
-    }
-  };
-
-  const handleUpdate = async (id, updatedProduct) => {
-    try {
-      const response = await axios.put(`https://back-db.vercel.app/api/products/${id}`, updatedProduct);
-      if (response.status === 200) {
-        alert('Product updated successfully!');
-        setProducts((prevProducts) =>
-          prevProducts.map((product) => (product.id === id ? { ...product, ...updatedProduct } : product))
-        );
-      }
-    } catch (error) {
-      console.error('Error updating product:', error);
-      alert('Failed to update product. Please try again.');
     }
   };
 
@@ -97,6 +119,17 @@ export default function POSAdminPage() {
   );
 
   const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+
+  const modals = [
+    {
+      type:"Register product",
+      onSubmit:handleAdd
+    },
+    {
+      type:"Update product",
+      onSubmit:handleUpdate
+    }
+  ] 
 
   if (loading) {
     return (
@@ -127,7 +160,7 @@ export default function POSAdminPage() {
       <Navbar buttons={buttons}/>
         <div className="flex">
           {/* Sidebar */}
-          <div className="w-1/4 bg-blue-500 p-4 text-white">
+          <div className="mx-10 mt-10 bg-dark-blue p-4 text-white rounded">
             <h2 className="text-lg font-bold">Filters</h2>
             <input
               value={searchQuery}
@@ -135,23 +168,18 @@ export default function POSAdminPage() {
               className="w-full p-2 mt-2 rounded"
               placeholder="Search..."
             />
-            <div className="mt-4">
-              <label>Category</label>
-              <select name="category" className="w-full p-2 mt-2 rounded" onChange={handleFilterChange}>
-                <option value="">All</option>
-                <option value="electronics">Electronics</option>
-                <option value="clothing">Clothing</option>
-                <option value="home">Home</option>
-              </select>
-            </div>
-            <div className="mt-4">
-              <label>Availability</label>
-              <select name="availability" className="w-full p-2 mt-2 rounded" onChange={handleFilterChange}>
-                <option value="">All</option>
-                <option value="in-stock">In Stock</option>
-                <option value="out-of-stock">Out of Stock</option>
-              </select>
-            </div>
+
+            {
+              fields.map((field) => (
+                <FilterField 
+                key={field.name}
+                name={field.name}
+                options={field.options}
+                onChange={handleFilterChange}
+                />
+              ))
+            }
+
             <div className="mt-4">
               <label>Price</label>
               <input
@@ -164,74 +192,42 @@ export default function POSAdminPage() {
           </div>
 
           {/* Main Content */}
-          <div className="w-3/4 p-4">
+          <div className="p-4 w-full mt-5">
             <h1 className="text-2xl font-bold mb-4">Products</h1>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div>
               {paginatedProducts.map((product) => (
-                <div key={product.id} className="border p-4 rounded shadow">
-                  <img src={product.image} alt={product.name} className="w-full h-32 object-cover rounded" />
-                  <h2 className="text-lg font-bold mt-2">{product.name}</h2>
-                  <p>Category: {product.category}</p>
-                  <p>Price: ${product.price}</p>
-                  <p>Availability: {product.availability}</p>
-                  <p>Location: {product.location}</p>
-                  <div className="mt-2">
-                    <label className="block text-sm font-medium text-gray-700">Price</label>
-                    <input
-                      type="number"
-                      className="w-full p-2 border rounded"
-                      value={product.price}
-                      onChange={(e) =>
-                        setProducts((prevProducts) =>
-                          prevProducts.map((p) =>
-                            p.id === product.id ? { ...p, price: parseFloat(e.target.value) } : p
-                          )
-                        )
-                      }
+                <ProductCard
+                  key={product.id}
+                  name={product.name}
+                  category={product.category}
+                  price={product.price}
+                  location={product.location}
+                  image={product.image}
+                  stock={product.stock}
+                  button={
+                    <Button 
+                    label={"Update product"}
+                    onClick={() => setModalType('Update product')}
+                    width='w-1/2'
                     />
-                  </div>
-                  <div className="mt-2">
-                    <label className="block text-sm font-medium text-gray-700">Stock</label>
-                    <input
-                      type="number"
-                      className="w-full p-2 border rounded"
-                      value={product.stock}
-                      onChange={(e) =>
-                        setProducts((prevProducts) =>
-                          prevProducts.map((p) =>
-                            p.id === product.id ? { ...p, stock: parseInt(e.target.value, 10) } : p
-                          )
-                        )
-                      }
-                    />
-                  </div>
-                  <button
-                    className="mt-2 bg-blue-500 text-white px-4 py-2 rounded"
-                    onClick={() => handleUpdate(product.id, { price: product.price, stock: product.stock })}
-                  >
-                    Save Changes
-                  </button>
-                  <button
-                    className="mt-2 bg-red-500 text-white px-4 py-2 rounded"
-                    onClick={() => handleDelete(product.id)}
-                  >
-                    Delete
-                  </button>
-                </div>
+                  }
+                />
               ))}
+
             </div>
-            <button
-              className="mt-4 bg-green-500 text-white px-4 py-2 rounded"
-              onClick={() => alert('Register a new product')}
-            >
-              + Register product
-            </button>
+            <Button 
+            label="Register product"
+            //CHANGE WITH NEEDED ACTION
+            onClick={() => setModalType('Register product')}
+            width="w-50"
+            />
+
             <div className="mt-4 flex justify-center">
               {Array.from({ length: totalPages }, (_, index) => (
                 <button
                   key={index}
                   className={`px-4 py-2 mx-1 ${
-                    currentPage === index + 1 ? 'bg-blue-600 text-white' : 'bg-gray-200'
+                    currentPage === index + 1 ? 'bg-dark-blue text-white' : 'bg-gray-200'
                   }`}
                   onClick={() => setCurrentPage(index + 1)}
                 >
@@ -241,6 +237,33 @@ export default function POSAdminPage() {
             </div>
           </div>
         </div>
+
+        {/* Modal */}
+        {actualModalType !== '' && (
+          <div className="fixed inset-0 flex justify-center items-center">
+            <div className="bg-white p-4 rounded shadow-lg">
+              {modals.map((modal) => {
+                if (modal.type === actualModalType) {
+                  return (
+                    <NewProductForm 
+                      key={modal.type}
+                      type={modal.type}
+                      onSubmit={modal.onSubmit}
+                    />
+                  );
+                }
+              })}
+              <button
+                className="mt-4 bg-red-500 text-white px-4 py-2 rounded"
+                onClick={() => setModalType('')} // Close the modal
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        )}
       </div>
+
+      
   );
 }

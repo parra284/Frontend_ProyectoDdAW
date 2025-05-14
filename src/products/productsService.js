@@ -10,6 +10,38 @@ export async function getProducts( queryParams ) {
   return res.json();
 } 
 
+export async function createProduct( product ) {
+  const token = localStorage.getItem('accessToken'); // Retrieve the token from local storage
+
+  const res = await fetch(`${API}/products`, {
+    method: 'POST',
+    headers: { 
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`
+    }
+    //FIX BODY
+  });
+
+  if (!res.ok) throw new Error(`Failed to fetch products: ${res}`);
+  return res.json();
+} 
+
+export async function updateProduct( id, updatedProduct ) {
+  const token = localStorage.getItem('accessToken'); // Retrieve the token from local storage
+
+  const res = await fetch(`${API}/products/${id}`, {
+    method: 'PUT',
+    headers: { 
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`
+    }
+    //FIX BODY
+  });
+
+  if (!res.ok) throw new Error(`Failed to fetch products: ${res}`);
+  return res.json();
+} 
+
 export async function deleteProduct( id ) {
   const token = localStorage.getItem('accessToken'); // Retrieve the token from local storage
 

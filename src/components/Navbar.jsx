@@ -26,7 +26,7 @@ export default function Navbar( { buttons }) {
           {buttons.map((button, index) => (
             <button
               key={index}
-              className={`text-white font-semibold hover:text-gray-200 m-5 ${
+              className={`text-white font-semibold hover:text-gray-200 m-5 hover:cursor-pointer ${
                 location.pathname === button.actionPath ? "underline" : ""
               }`} // Add underline if selected
               onClick={() => handleButtonClick(button)} // Update selected button on click
@@ -37,7 +37,7 @@ export default function Navbar( { buttons }) {
         </div>
       )}
       <button
-        className="text-white font-semibold hover:text-gray-200 m-5"
+        className="text-white font-semibold hover:text-gray-200 hover:cursor-pointer m-5"
         onClick={toggleModal}
         aria-expanded={isModalOpen}
         aria-controls="profile-modal"
