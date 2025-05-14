@@ -1,5 +1,8 @@
 export const fields = [
   {
-    name:"Name"
+    name:"name"
+  },
+  {
+    name:"price"
   }
 ];

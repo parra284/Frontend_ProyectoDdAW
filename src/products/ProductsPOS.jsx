@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import { getProducts, deleteProduct, createProduct, updateProduct } from './productsService';
 import { getButtons } from '../utils/buttonsPOS';
 import Navbar from '../components/Navbar';
@@ -17,10 +16,11 @@ export default function POSAdminPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [filters, setFilters] = useState({ category: '', availability: '', priceRange: '' });
   const [actualModalType, setModalType] = useState('');
+  const [productId, setProductId] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const buttons = getButtons(navigate);
+  const navbarButtons = getButtons(navigate);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
@@ -59,12 +59,14 @@ export default function POSAdminPage() {
     setFilters((prevFilters) => ({ ...prevFilters, [name]: value }));
   };
 
-  const handleAdd = async (newProduct) => {
+  const handleAdd = async (data) => {
     //FIX
 
     try {
-      await createProduct();
-      setProducts((prevProducts) => [...prevProducts, newProduct]);
+      console.log(data);
+      
+      await createProduct(data);
+      setProducts((prevProducts) => [...prevProducts, data]);
       alert('Product added successfully!');
       setModalType('');
     } catch (err) {
@@ -73,13 +75,19 @@ export default function POSAdminPage() {
     }
   };
 
-  const handleUpdate = async (id, updatedProduct) => {
+  const handleUpdate = async (data) => {
     //FIX
     try {
-      await updateProduct(id, updatedProduct)
+      const id = productId;
+      console.log(id);
+      console.log(data);
+      
+      
+      await updateProduct(id, data)
       setProducts((prevProducts) =>
-        prevProducts.map((product) => (product.id === id ? { ...product, ...updatedProduct } : product))
+        prevProducts.map((product) => (product.id === id ? { ...product, ...data } : product))
       );
+      setProductId('');
       setModalType('');
     } catch (error) {
       console.error('Error updating product:', error);
@@ -91,6 +99,8 @@ export default function POSAdminPage() {
     // FIX
     const confirmDelete = window.confirm('Are you sure you want to delete this product?');
     if (!confirmDelete) return;
+
+    console.log(id);
 
     try {
       await deleteProduct(id);
@@ -120,14 +130,37 @@ export default function POSAdminPage() {
 
   const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
 
+  const handleUpdateClick = (id) => {
+    setProductId(id);
+    setModalType('Update product');
+  };
+
+  const handleClose = () => {
+    setModalType('');
+    setProductId('');
+  }
+
+  const cardButtons = [
+    {
+      label:"Update product",
+      onClick:(id) => handleUpdateClick(id),
+      width:'w-1/2'
+    },
+    {
+      label:"Delete product",
+      onClick:(id) => handleDelete(id),
+      width:'w-1/2'
+    },
+  ]
+
   const modals = [
     {
       type:"Register product",
-      onSubmit:handleAdd
+      onSubmit:(data) => handleAdd(data)
     },
     {
       type:"Update product",
-      onSubmit:handleUpdate
+      onSubmit:(data) => handleUpdate(data)
     }
   ] 
 
@@ -135,7 +168,7 @@ export default function POSAdminPage() {
     return (
       <div>
         <Navbar 
-        buttons={buttons}
+        buttons={navbarButtons}
         />
         <div className="p-4">
           <p>Loading products...</p>
@@ -157,7 +190,7 @@ export default function POSAdminPage() {
 
   return (
     <div>
-      <Navbar buttons={buttons}/>
+      <Navbar buttons={navbarButtons}/>
         <div className="flex">
           {/* Sidebar */}
           <div className="mx-10 mt-10 bg-dark-blue p-4 text-white rounded">
@@ -194,7 +227,7 @@ export default function POSAdminPage() {
           {/* Main Content */}
           <div className="p-4 w-full mt-5">
             <h1 className="text-2xl font-bold mb-4">Products</h1>
-            <div>
+            <div className='flex gap-4'>
               {paginatedProducts.map((product) => (
                 <ProductCard
                   key={product.id}
@@ -204,12 +237,16 @@ export default function POSAdminPage() {
                   location={product.location}
                   image={product.image}
                   stock={product.stock}
-                  button={
-                    <Button 
-                    label={"Update product"}
-                    onClick={() => setModalType('Update product')}
-                    width='w-1/2'
+                  buttons={cardButtons.map((button) => {
+                    return (
+                      <Button 
+                      key={button.label}
+                      label={button.label}
+                      onClick={() => button.onClick(product.id)}
+                      width={button.width}
                     />
+                    )
+                    })
                   }
                 />
               ))}
@@ -248,14 +285,14 @@ export default function POSAdminPage() {
                     <NewProductForm 
                       key={modal.type}
                       type={modal.type}
-                      onSubmit={modal.onSubmit}
+                      onSubmit={(data) => modal.onSubmit(data)}
                     />
                   );
                 }
               })}
               <button
                 className="mt-4 bg-red-500 text-white px-4 py-2 rounded"
-                onClick={() => setModalType('')} // Close the modal
+                onClick={() => handleClose()} // Close the modal
               >
                 Close
               </button>

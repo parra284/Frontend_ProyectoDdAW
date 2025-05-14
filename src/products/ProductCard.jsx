@@ -1,4 +1,4 @@
-export default function ProductCard( {name, category, price, availability, location, image, stock, button} ) {
+export default function ProductCard( {name, category, price, availability, location, image, stock, buttons} ) {
   return (
     <div className="border p-4 rounded shadow w-1/3">
       <img src={image} alt={name} className="w-full h-32 object-cover rounded" />
@@ -8,7 +8,7 @@ export default function ProductCard( {name, category, price, availability, locat
       <p>Availability: {availability}</p>
       <p>Location: {location}</p>
       <p>Stock: {stock}</p>
-      {button}
+      {buttons}
     </div>
   )
 }
