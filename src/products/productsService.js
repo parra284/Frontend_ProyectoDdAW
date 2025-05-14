@@ -56,3 +56,20 @@ export async function deleteProduct( id ) {
   if (!res.ok) throw new Error(`Failed to fetch products: ${res}`);
   return res.json();
 }
+
+export async function createOrder( products ) {
+  const token = localStorage.getItem('accessToken'); // Retrieve the token from local storage
+
+  const res = await fetch(`${API}/orders`, {
+    method: 'POST',
+    headers: { 
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`
+    }
+
+    //FIX BODY
+  });
+
+  if (!res.ok) throw new Error(`Failed to fetch products: ${res}`);
+  return res.json();
+}

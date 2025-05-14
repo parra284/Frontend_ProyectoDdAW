@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form";
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import Navbar from '../components/Navbar';
-import { getProducts } from './productsService';
+import { createOrder, getProducts } from './productsService';
 import Input from '../components/Input';
 import Button from "../components/Button";
 
@@ -56,15 +56,13 @@ const UserProductPage = () => {
       }
       return [...prev, { productId, quantity }];
     });
+    setAddModal(false);
   };
 
-  const handleSubmit1 = async () => {
+  const handleCartSubmit = async () => {
     //SHOPPING CART FUNCTION  
     try {
-      await axios.post('/api/orders', {
-        products: selectedProducts,
-        posId: 'example-pos-id', // Replace with actual POS ID
-      });
+      await createOrder(selectedProducts);
       alert('Order created successfully!');
     } catch (error) {
       console.error('Error creating order:', error);
@@ -145,6 +143,13 @@ const UserProductPage = () => {
               onClick={() => setCartModal(false)} // Close the modal
             >
               Close
+            </button>
+
+            <button
+            className="mt-4 bg-dark-blue text-white px-4 py-2 rounded"
+            onClick={() => handleCartSubmit()}
+            >
+              Submit
             </button>
           </div>
         </div>

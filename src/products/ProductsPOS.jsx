@@ -300,7 +300,5 @@ export default function POSAdminPage() {
           </div>
         )}
       </div>
-
-      
   );
 }
