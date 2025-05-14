@@ -1,19 +1,28 @@
+import { useForm } from "react-hook-form";
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import Navbar from '../components/Navbar';
+import { getProducts } from './productsService';
+import Input from '../components/Input';
+import Button from "../components/Button";
 
 const UserProductPage = () => {
+  const { register, handleSubmit, formState: { errors } } = useForm();
+  const [cartModal, setCartModal] = useState(false);
+  const [addModal, setAddModal] = useState(false);
   const [products, setProducts] = useState([]);
-  const [selectedProducts, setSelectedProducts] = useState([]);
+  const [productId, setProductId] = useState('');
+  const [selectedProducts, setSelectedProducts] = useState(() => {
+    const savedCart = localStorage.getItem('shoppingCart');
+    return savedCart ? JSON.parse(savedCart) : [];
+  });
   const [showFilters, setShowFilters] = useState(false);
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get('https://back-db.vercel.app/api/products');
-        console.log(response);
-        
-        setProducts(response.data.products);
+        const response = await getProducts();
+        setProducts(response.products);
       } catch (err) {
         console.error('Error fetching products:', err);
       }
@@ -22,7 +31,22 @@ const UserProductPage = () => {
     fetchProducts();
   }, []);
 
-  const handleProductSelection = (productId, quantity) => {
+  const handleCart = () => {
+    localStorage.setItem('shoppingCart', JSON.stringify(selectedProducts))
+  }
+
+  useEffect(() => {
+    console.log(selectedProducts); // Logs the updated state whenever it changes
+    handleCart();
+  }, [selectedProducts]);
+
+  const handleAddProduct = (id) => {
+    setAddModal(true);
+    setProductId(id);
+  }
+
+  const handleProductSelection = (data) => {
+    const quantity = data.quantity;
     setSelectedProducts((prev) => {
       const existing = prev.find((item) => item.productId === productId);
       if (existing) {
@@ -34,7 +58,8 @@ const UserProductPage = () => {
     });
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit1 = async () => {
+    //SHOPPING CART FUNCTION  
     try {
       await axios.post('/api/orders', {
         products: selectedProducts,
@@ -48,9 +73,15 @@ const UserProductPage = () => {
   };
 
   return (
-
     <div className="p-4">
-      <Navbar />
+      <Navbar 
+      buttons={[
+        {
+          label:"Cart",
+          action: () => setCartModal(true)
+        }
+      ]}
+      />
       <header className="flex justify-between items-center mb-4">
         <h1 className="text-xl font-bold">Products</h1>
         <button
@@ -88,7 +119,7 @@ const UserProductPage = () => {
             {product.stock > 0 ? (
               <button
                 className="bg-green-600 text-white px-4 py-2 rounded"
-                onClick={() => handleProductSelection(product.id, 1)}
+                onClick={() => handleAddProduct(product.id)}
               >
                 Add to Cart
               </button>
@@ -101,12 +132,49 @@ const UserProductPage = () => {
         ))}
       </div>
 
-      <button
-        className="bg-blue-600 text-white px-4 py-2 rounded mt-4"
-        onClick={handleSubmit}
-      >
-        Submit Order
-      </button>
+      {/* Shopping cart */}
+      {cartModal && (
+        <div className="fixed inset-0 flex justify-center items-center">
+          <div className="bg-white p-4 rounded shadow-lg">
+            <p>
+              {localStorage.getItem('shoppingCart')}
+            </p>
+
+            <button
+              className="mt-4 bg-red-500 text-white px-4 py-2 rounded"
+              onClick={() => setCartModal(false)} // Close the modal
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Add to cart */}
+      {addModal && (
+        <div className="fixed inset-0 flex justify-center items-center">
+          <form
+            className='flex flex-col items-center justify-around w-full max-w-md p-4 bg-white bg-opacity-90 rounded-lg shadow-md'
+            onSubmit={handleSubmit(handleProductSelection)}
+            aria-labelledby="form-title"
+          >
+            <h2 id="form-title" className='text-dark-blue text-3xl font-bold'>add</h2>
+            
+            <Input
+              {...register("quantity")}
+            />
+
+            <Button type="submit" label={"add"} />
+
+            <button
+              className="mt-4 bg-red-500 text-white px-4 py-2 rounded"
+              onClick={() => setAddModal(false)} // Close the modal
+            >
+              Close
+            </button>
+          </form>
+        </div>
+      )}
     </div>
   );
 };

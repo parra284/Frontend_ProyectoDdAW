@@ -55,4 +55,4 @@ export async function deleteProduct( id ) {
 
   if (!res.ok) throw new Error(`Failed to fetch products: ${res}`);
   return res.json();
-} 
+}
