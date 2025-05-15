@@ -1,4 +1,4 @@
-export const fields = [
+export const filterFields = [
   {
     name:"category",
     options:[

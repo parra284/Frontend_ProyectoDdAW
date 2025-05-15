@@ -1,10 +1,11 @@
 import { useForm } from "react-hook-form";
-import { fields } from "../utils/productFields";
 import Input from '../components/Input';
 import Button from "../components/Button";
 
-export default function NewProductForm({ type, onSubmit }) {
-  const { register, handleSubmit, formState: { errors } } = useForm();
+export default function NewProductForm({ type, onSubmit, fields, defaultValues }) {
+  const { register, handleSubmit, formState: { errors } } = useForm({
+    defaultValues, // Set default values for the form fields
+  });
 
   return (
     <form
@@ -18,8 +19,6 @@ export default function NewProductForm({ type, onSubmit }) {
           key={field.name}
           {...register(field.name, field.validation)}
           error={errors[field.name]?.message}
-          aria-invalid={!!errors[field.name]}
-          aria-describedby={`${field.name}-error`}
         />
       ))}
 

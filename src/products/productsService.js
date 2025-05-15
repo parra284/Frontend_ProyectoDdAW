@@ -11,6 +11,9 @@ export async function getProducts( queryParams ) {
 } 
 
 export async function createProduct( product ) {
+  console.log(product);
+  
+
   const token = localStorage.getItem('accessToken'); // Retrieve the token from local storage
 
   const res = await fetch(`${API}/products`, {
@@ -26,9 +29,10 @@ export async function createProduct( product ) {
   return res.json();
 } 
 
-export async function updateProduct( id, updatedProduct ) {
+export async function updateProduct( updatedProduct ) {
   const token = localStorage.getItem('accessToken'); // Retrieve the token from local storage
-
+  const id = updatedProduct.id;
+  console.log(updatedProduct);
   const res = await fetch(`${API}/products/${id}`, {
     method: 'PUT',
     headers: { 
@@ -44,6 +48,9 @@ export async function updateProduct( id, updatedProduct ) {
 
 export async function deleteProduct( id ) {
   const token = localStorage.getItem('accessToken'); // Retrieve the token from local storage
+
+  console.log(id);
+  
 
   const res = await fetch(`${API}/products/${id}`, {
     method: 'DELETE',

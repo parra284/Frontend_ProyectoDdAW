@@ -5,24 +5,34 @@ import { getButtons } from '../utils/buttonsPOS';
 import Navbar from '../components/Navbar';
 import Button from '../components/Button';
 import FilterField from '../components/FilterField';
-import { fields } from '../utils/filterFields';
+import { filterFields } from '../utils/filterFields';
+import { productFields } from '../utils/formFields'
 import ProductCard from './ProductCard';
-import NewProductForm from './NewProductForm';
+import Form from '../components/Form';
+import transformText from '../utils/transformText';
 
 export default function POSAdminPage() {
   const navigate = useNavigate();
 
+  //Fetch
   const [products, setProducts] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [filters, setFilters] = useState({ category: '', availability: '', priceRange: '' });
-  const [actualModalType, setModalType] = useState('');
-  const [productId, setProductId] = useState('');
+
+  //Modals
+  const [modalType, setModalType] = useState('');
+  const [modalData, setModalData] = useState(null);
+  
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  //Navbar buttons
   const navbarButtons = getButtons(navigate);
+
+  //Pagination
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
+
 
   //Getting every product (fix query params)
   useEffect(() => {
@@ -46,25 +56,18 @@ export default function POSAdminPage() {
         setLoading(false);
       }
     };
-
     fetchProducts();
   }, []);
-
-  const handleSearch = (e) => {
-    setSearchQuery(e.target.value);
-  };
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
     setFilters((prevFilters) => ({ ...prevFilters, [name]: value }));
   };
 
-  const handleAdd = async (data) => {
+  const apiAdd = async (data) => {
     //FIX
 
     try {
-      console.log(data);
-      
       await createProduct(data);
       setProducts((prevProducts) => [...prevProducts, data]);
       alert('Product added successfully!');
@@ -75,19 +78,15 @@ export default function POSAdminPage() {
     }
   };
 
-  const handleUpdate = async (data) => {
+  const apiUpdate = async (data) => {
     //FIX
     try {
-      const id = productId;
-      console.log(id);
-      console.log(data);
-      
-      
-      await updateProduct(id, data)
+      await updateProduct(data);
       setProducts((prevProducts) =>
-        prevProducts.map((product) => (product.id === id ? { ...product, ...data } : product))
+        prevProducts.map((product) =>
+          product.id === id ? data : product
+        )
       );
-      setProductId('');
       setModalType('');
     } catch (error) {
       console.error('Error updating product:', error);
@@ -95,12 +94,17 @@ export default function POSAdminPage() {
     }
   };
 
-  const handleDelete = async (id) => {
+  const apiDelete = async (id) => {
     // FIX
     const confirmDelete = window.confirm('Are you sure you want to delete this product?');
     if (!confirmDelete) return;
 
-    console.log(id);
+    const existingProduct = products.find((product) => product.id === id);
+
+    if (!existingProduct) {
+      alert('Product not found. Unable to delete.');
+      return;
+    }
 
     try {
       await deleteProduct(id);
@@ -130,39 +134,26 @@ export default function POSAdminPage() {
 
   const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
 
-  const handleUpdateClick = (id) => {
-    setProductId(id);
-    setModalType('Update product');
+  const handleUpdate = (data) => {
+    setModalType('update');
+    setModalData(data);
   };
 
   const handleClose = () => {
     setModalType('');
-    setProductId('');
+    setModalData(null);
   }
-
-  const cardButtons = [
-    {
-      label:"Update product",
-      onClick:(id) => handleUpdateClick(id),
-      width:'w-1/2'
-    },
-    {
-      label:"Delete product",
-      onClick:(id) => handleDelete(id),
-      width:'w-1/2'
-    },
-  ]
 
   const modals = [
     {
-      type:"Register product",
-      onSubmit:(data) => handleAdd(data)
+      type:"register",
+      onSubmit:(data) => apiAdd(data)
     },
     {
-      type:"Update product",
-      onSubmit:(data) => handleUpdate(data)
+      type:"update",
+      onSubmit:(data) => apiUpdate(data)
     }
-  ] 
+  ]
 
   if (loading) {
     return (
@@ -190,115 +181,126 @@ export default function POSAdminPage() {
 
   return (
     <div>
-      <Navbar buttons={navbarButtons}/>
-        <div className="flex">
-          {/* Sidebar */}
-          <div className="mx-10 mt-10 bg-dark-blue p-4 text-white rounded">
-            <h2 className="text-lg font-bold">Filters</h2>
-            <input
-              value={searchQuery}
-              onChange={handleSearch}
-              className="w-full p-2 mt-2 rounded"
-              placeholder="Search..."
-            />
+      <Navbar 
+      buttons={navbarButtons}
+      />
+      <div className="flex">
+        {/* Sidebar */}
+        <div className="mx-10 mt-10 bg-dark-blue p-4 text-white rounded">
+          <h2 className="text-lg font-bold">Filters</h2>
+          <input
+            value={searchQuery}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+            }}
+            className="w-full p-2 mt-2 rounded"
+            placeholder="Search..."
+          />
 
-            {
-              fields.map((field) => (
-                <FilterField 
-                key={field.name}
-                name={field.name}
-                options={field.options}
-                onChange={handleFilterChange}
-                />
-              ))
-            }
-
-            <div className="mt-4">
-              <label>Price</label>
-              <input
-                name="priceRange"
-                type="range"
-                className="w-full mt-2"
-                onChange={(e) => handleFilterChange({ target: { name: 'priceRange', value: e.target.value } })}
+          {
+            filterFields.map((field) => (
+              <FilterField 
+              key={field.name}
+              name={field.name}
+              options={field.options}
+              onChange={handleFilterChange}
               />
-            </div>
-          </div>
+            ))
+          }
 
-          {/* Main Content */}
-          <div className="p-4 w-full mt-5">
-            <h1 className="text-2xl font-bold mb-4">Products</h1>
-            <div className='flex gap-4'>
-              {paginatedProducts.map((product) => (
-                <ProductCard
-                  key={product.id}
-                  name={product.name}
-                  category={product.category}
-                  price={product.price}
-                  location={product.location}
-                  image={product.image}
-                  stock={product.stock}
-                  buttons={cardButtons.map((button) => {
-                    return (
-                      <Button 
-                      key={button.label}
-                      label={button.label}
-                      onClick={() => button.onClick(product.id)}
-                      width={button.width}
-                    />
-                    )
-                    })
-                  }
-                />
-              ))}
-
-            </div>
-            <Button 
-            label="Register product"
-            //CHANGE WITH NEEDED ACTION
-            onClick={() => setModalType('Register product')}
-            width="w-50"
+          <div className="mt-4">
+            <label>Price</label>
+            <input
+              name="priceRange"
+              type="range"
+              className="w-full mt-2"
+              onChange={(e) => handleFilterChange({ target: { name: 'priceRange', value: e.target.value } })}
             />
-
-            <div className="mt-4 flex justify-center">
-              {Array.from({ length: totalPages }, (_, index) => (
-                <button
-                  key={index}
-                  className={`px-4 py-2 mx-1 ${
-                    currentPage === index + 1 ? 'bg-dark-blue text-white' : 'bg-gray-200'
-                  }`}
-                  onClick={() => setCurrentPage(index + 1)}
-                >
-                  {index + 1}
-                </button>
-              ))}
-            </div>
           </div>
         </div>
 
-        {/* Modal */}
-        {actualModalType !== '' && (
-          <div className="fixed inset-0 flex justify-center items-center">
-            <div className="bg-white p-4 rounded shadow-lg">
-              {modals.map((modal) => {
-                if (modal.type === actualModalType) {
-                  return (
-                    <NewProductForm 
-                      key={modal.type}
-                      type={modal.type}
-                      onSubmit={(data) => modal.onSubmit(data)}
-                    />
-                  );
+        {/* Main Content */}
+        <div className="p-4 w-full mt-5">
+          <h1 className="text-2xl font-bold mb-4">Products</h1>
+          <div className='flex gap-4'>
+            {paginatedProducts.map((product) => (
+              <ProductCard
+                key={product.id}
+                name={product.name}
+                category={product.category}
+                price={product.price}
+                location={product.location}
+                image={product.image}
+                stock={product.stock}
+                buttons={
+                <>
+                  <Button 
+                    key="update"
+                    label="Update product"
+                    onClick={() => handleUpdate(product)}
+                    width="w-1/2"
+                  />
+                  <Button 
+                    key="delete"
+                    label="Delete product"
+                    onClick={() => apiDelete(product.id)}
+                    width="w-1/2"
+                  />
+                </>
                 }
-              })}
-              <button
-                className="mt-4 bg-red-500 text-white px-4 py-2 rounded"
-                onClick={() => handleClose()} // Close the modal
-              >
-                Close
-              </button>
-            </div>
+              />
+            ))}
           </div>
-        )}
+
+          <Button 
+          label="Register product"
+          //CHANGE WITH NEEDED ACTION
+          onClick={() => setModalType('register')}
+          width="w-50"
+          />
+
+          <div className="mt-4 flex justify-center">
+            {Array.from({ length: totalPages }, (_, index) => (
+              <button
+                key={index}
+                className={`px-4 py-2 mx-1 ${
+                  currentPage === index + 1 ? 'bg-dark-blue text-white' : 'bg-gray-200'
+                }`}
+                onClick={() => setCurrentPage(index + 1)}
+              >
+                {index + 1}
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
+
+      {/* Modal (fix for scalability) */}
+      {modalType !== '' && (
+        <div className="fixed inset-0 flex justify-center items-center">
+          <div className="bg-white p-4 rounded shadow-lg">
+            {modals.map((modal) => {
+              if (modal.type === modalType) {
+                return (
+                  <Form 
+                    key={modal.type}
+                    type={transformText(modalType) + (modalData?.id ? " --- " + modalData.id : "")}
+                    onSubmit={(data) => modal.onSubmit(data)}
+                    fields={productFields}
+                    defaultValues={modalData}
+                  />
+                );
+              }
+            })}
+            <button
+              className="mt-4 bg-red-500 text-white px-4 py-2 rounded hover:cursor-pointer"
+              onClick={() => handleClose()} // Close the modal
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
