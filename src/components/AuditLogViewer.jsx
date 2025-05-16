@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import { collection, query, where, onSnapshot } from 'firebase/firestore';
+import db from '../utils/firebaseConfig';
 import { LogAction } from '../utils/auditLogger';
 
 /**
@@ -20,53 +21,28 @@ const AuditLogViewer = () => {
   const itemsPerPage = 10;
   
   useEffect(() => {
-    fetchLogs();
+    const fetchLogs = () => {
+      try {
+        const q = query(collection(db, 'auditLogs'), where('action', '==', 'PRODUCT_DELETED'));
+        const unsubscribe = onSnapshot(q, (snapshot) => {
+          const logList = snapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }));
+          setLogs(logList);
+          setLoading(false);
+        });
+        return unsubscribe; // Cleanup listener on unmount
+      } catch (err) {
+        console.error('Error fetching audit logs:', err);
+        setError('Failed to load audit logs.');
+        setLoading(false);
+      }
+    };
+
+    const unsubscribe = fetchLogs();
+    return () => unsubscribe && unsubscribe();
   }, [filters, currentPage]);
-  
-  const fetchLogs = async () => {
-    try {
-      setLoading(true);
-      
-      // Format the query parameters for the API call
-      const queryParams = new URLSearchParams({
-        action: filters.action,
-        page: currentPage,
-        limit: itemsPerPage,
-        q: filters.searchQuery
-      });
-      
-      if (filters.startDate) {
-        queryParams.append('startDate', filters.startDate);
-      }
-      
-      if (filters.endDate) {
-        queryParams.append('endDate', filters.endDate);
-      }
-      
-      const response = await axios.get(`https://back-db.vercel.app/api/audit-logs?${queryParams}`);
-      setLogs(response.data.logs || []);
-      setTotalPages(Math.ceil((response.data.total || 0) / itemsPerPage));
-      setError(null);
-    } catch (error) {
-      console.error('Error fetching audit logs:', error);
-      setError('Failed to load audit logs. Please try again.');
-      
-      // Check for backup logs in localStorage if API call fails
-      const backupLogs = JSON.parse(localStorage.getItem('auditBackupLogs') || '[]');
-      const filteredBackupLogs = backupLogs.filter(log => 
-        log.action === filters.action &&
-        (!filters.searchQuery || 
-          log.details.toLowerCase().includes(filters.searchQuery.toLowerCase()))
-      );
-      
-      if (filteredBackupLogs.length > 0) {
-        setLogs(filteredBackupLogs);
-        setError('Using locally stored logs due to server connection issues.');
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
   
   const handleFilterChange = (e) => {
     const { name, value } = e.target;

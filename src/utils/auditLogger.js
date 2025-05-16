@@ -94,9 +94,50 @@ export const logProductDeletion = async (userId, product, reason = '') => {
   );
 };
 
+/**
+ * Log stock adjustment to the audit system
+ * @param {string} userId - The ID of the user performing the adjustment
+ * @param {object} product - The product being adjusted
+ * @param {number} quantity - The quantity changed (positive for additions, negative for subtractions)
+ * @param {string} reason - The reason for adjustment
+ * @returns {Promise<object>} The response from the server or null if logging failed
+ */
+export const logStockAdjustment = async (userId, product, quantity, reason = '') => {
+  const adjustmentType = quantity >= 0 ? 'added to' : 'removed from';
+  const absQuantity = Math.abs(quantity);
+  const timestamp = new Date().toISOString();
+  
+  const details = `${absQuantity} units ${adjustmentType} product "${product.name}" (ID: ${product.id})${reason ? `: ${reason}` : ''}`;
+  
+  const clientInfo = {
+    userAgent: navigator.userAgent,
+    platform: navigator.platform,
+    language: navigator.language,
+    screenResolution: `${window.screen.width}x${window.screen.height}`
+  };
+  
+  return logAuditEvent(
+    LogAction.STOCK_ADJUSTED,
+    userId,
+    details,
+    {
+      productId: product.id,
+      productName: product.name,
+      productSKU: product.sku || '',
+      previousStock: product.stock,
+      newStock: product.stock + quantity,
+      quantity,
+      reason,
+      timestamp,
+      clientInfo
+    }
+  );
+};
+
 export default {
   logAuditEvent,
   logProductDeletion,
+  logStockAdjustment,
   LogType,
   LogAction
 };

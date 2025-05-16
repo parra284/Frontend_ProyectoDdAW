@@ -4,7 +4,8 @@ import LogIn from './auth/LogIn';
 import ForbiddenAccess from './auth/ForbiddenAccess';
 import POSAdminPage from './products/POSAdminPage';
 import UserProductPage from './products/UserProductPage';
-import InventoryDashboard from './products/InventoryDashboard';
+import InventoryDashboard from './products/InventoryDashboardNew';
+import InventoryReports from './products/InventoryReports';
 import AuditLogPage from './products/AuditLogPage';
 import ProtectedRoute from "./auth/ProtectedRoute";
 import ResponsiveDemo from "./components/ResponsiveDemo";
@@ -22,9 +23,9 @@ const routes = [
     path: '/products/user', 
     element: <ProtectedRoute element={<UserProductPage />} roles={['user']}/> 
   },  { path: '/admin', element: <POSAdminPage /> },
-  { path: '/forbidden', element: <ForbiddenAccess /> },
-  { path: '/responsive-demo', element: <ResponsiveDemo /> },
+  { path: '/forbidden', element: <ForbiddenAccess /> },  { path: '/responsive-demo', element: <ResponsiveDemo /> },
   { path: '/inventory', element: <ProtectedRoute element={<InventoryDashboard />} roles={['POS']}/> },
+  { path: '/inventory/reports', element: <ProtectedRoute element={<InventoryReports />} roles={['POS', 'admin']}/> },
   { path: '/audit-logs', element: <ProtectedRoute element={<AuditLogPage />} roles={['POS', 'admin']}/> }
 ]
 

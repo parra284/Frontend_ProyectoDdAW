@@ -59,7 +59,7 @@ export default function NewProductForm({ onProductAdded }) {
       if (!response.ok) throw new Error("Failed to add product.");
 
       const newProduct = await response.json();
-      onProductAdded(newProduct);
+      onProductAdded(newProduct); // Notify parent component
       setFormData({ name: "", sku: "", price: "", stock: "", category: "" });
       alert("Product added successfully!");
     } catch (err) {
