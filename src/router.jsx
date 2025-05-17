@@ -17,25 +17,22 @@ const routes = [
   { path: '/login', element: <LogIn /> },
   { 
     path: '/products', 
-    element: <ProtectedRoute element={<POSAdminPage />} roles={['POS']}/> 
+    element: <ProtectedRoute elements={[<POSAdminPage />, <UserProductPage/>]} roles={['POS','user']}/> 
   },
-  { 
-    path: '/products/user', 
-    element: <ProtectedRoute element={<UserProductPage />} roles={['user']}/> 
-  },  { path: '/admin', element: <POSAdminPage /> },
-  { path: '/forbidden', element: <ForbiddenAccess /> },  { path: '/responsive-demo', element: <ResponsiveDemo /> },
-  { path: '/inventory', element: <ProtectedRoute element={<InventoryDashboard />} roles={['POS']}/> },
-  { path: '/inventory/reports', element: <ProtectedRoute element={<InventoryReports />} roles={['POS', 'admin']}/> },
-  { path: '/audit-logs', element: <ProtectedRoute element={<AuditLogPage />} roles={['POS', 'admin']}/> }
+  { path: '/forbidden', element: <ForbiddenAccess /> },
+  { path: '/responsive-demo', element: <ResponsiveDemo /> },
+  { path: '/inventory', element: <ProtectedRoute elements={<InventoryDashboard />} roles={['POS']}/> },
+  { path: '/inventory/reports', element: <ProtectedRoute elements={<InventoryReports />} roles={['POS', 'admin']}/> },
+  { path: '/audit-logs', element: <ProtectedRoute elements={<AuditLogPage />} roles={['POS', 'admin']}/> }
 ]
 
 const router = createBrowserRouter(routes);
 
 export default function Router() {
-    return (
-        <>
-            <NotificationSystem position="bottom-right" />
-            <RouterProvider router={router} />
-        </>
-    );
+  return (
+      <>
+          <NotificationSystem position="bottom-right" />
+          <RouterProvider router={router} />
+      </> 
+  );
 }

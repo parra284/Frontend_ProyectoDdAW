@@ -19,10 +19,6 @@ export async function login(data) {
       localStorage.setItem('accessToken', response.data.accessToken);
     }
     
-    if (response.data.refreshToken) {
-      localStorage.setItem('refreshToken', response.data.refreshToken);
-    }
-    
     return response.data;
   } catch (error) {
     console.error('Login error:', error.response?.data || error.message);

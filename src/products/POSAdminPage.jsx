@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import { useNavigate } from 'react-router-dom';
 import DeleteConfirmationModal from '../components/DeleteConfirmationModal';
+import RegisterProductModal from '../components/RegisterProductModal';
 import { logProductDeletion } from '../utils/auditLogger';
 import apiClient from '../utils/apiClient';
 import { showNotification } from '../components/NotificationSystem';
@@ -9,15 +10,18 @@ import { showNotification } from '../components/NotificationSystem';
 export default function POSAdminPage() {
   const [products, setProducts] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [filters, setFilters] = useState({ category: '', availability: '', priceRange: '' });
+  const [filters, setFilters] = useState({ category: '', availability: '', priceRange: '', location: '' });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [showFilters, setShowFilters] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [productToDelete, setProductToDelete] = useState(null);
+  const [registerModalOpen, setRegisterModalOpen] = useState(false);
   const navigate = useNavigate();
-  const itemsPerPage = 5;  useEffect(() => {
+  const itemsPerPage = 5;  
+  
+  useEffect(() => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
@@ -25,6 +29,7 @@ export default function POSAdminPage() {
           category: filters.category,
           availability: filters.availability,
           priceRange: filters.priceRange,
+          location: filters.location,
           keyword: searchQuery,
         });
         
@@ -53,6 +58,10 @@ export default function POSAdminPage() {
     const { name, value } = e.target;
     setFilters((prevFilters) => ({ ...prevFilters, [name]: value }));
   };
+
+  const openRegisterModal = () => setRegisterModalOpen(true);
+  const closeRegisterModal = () => setRegisterModalOpen(false);
+
   const initiateProductDelete = (product) => {
     setProductToDelete(product);
     setDeleteModalOpen(true);
@@ -61,7 +70,8 @@ export default function POSAdminPage() {
   const cancelDelete = () => {
     setProductToDelete(null);
     setDeleteModalOpen(false);
-  };  const handleDelete = async (reason) => {
+  };  
+  const handleDelete = async (reason) => {
     if (!productToDelete) return;
     
     const id = productToDelete.id;
@@ -96,7 +106,8 @@ export default function POSAdminPage() {
     } finally {
       setLoading(false);
     }
-  };  const handleUpdate = async (id, updatedProduct) => {
+  };  
+  const handleUpdate = async (id, updatedProduct) => {
     try {
       const user = JSON.parse(localStorage.getItem('user'));
       
@@ -128,13 +139,34 @@ export default function POSAdminPage() {
     }
   };
 
+  const handleRegisterProduct = async (newProduct) => {
+    try {
+      setLoading(true);
+      const response = await apiClient.post('/products', newProduct);
+      if (response.status === 201 || response.status === 200) {
+        setProducts((prev) => [...prev, response.data.product]);
+        showNotification('Product registered successfully!', 'success');
+        setRegisterModalOpen(false);
+      }
+    } catch (err) {
+      console.error('Error registering product:', err);
+      showNotification(`Failed to register product: ${err.response?.data?.message || err.message}`, 'error');
+      if (err.response?.status === 401) {
+        navigate('/login');
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const filteredProducts = Array.isArray(products)
     ? products.filter((product) => {
         return (
           product.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
           (filters.category ? product.category === filters.category : true) &&
           (filters.availability ? product.availability === filters.availability : true) &&
-          (filters.priceRange ? product.price <= filters.priceRange : true)
+          (filters.priceRange ? product.price <= filters.priceRange : true) &&
+          (filters.location ? product.location === filters.location : true)
         );
       })
     : [];
@@ -190,6 +222,12 @@ export default function POSAdminPage() {
         {/* Notification element - hidden by default */}
         <div id="notification" style={{ display: 'none' }} className="fixed bottom-4 right-4 bg-green-600 text-white px-6 py-3 rounded shadow-lg"></div>
         
+        <RegisterProductModal
+          isOpen={registerModalOpen}
+          onCancel={closeRegisterModal}
+          onConfirm={handleRegisterProduct}
+        />
+
         {/* Delete confirmation modal */}
         <DeleteConfirmationModal
           isOpen={deleteModalOpen}
@@ -248,6 +286,19 @@ export default function POSAdminPage() {
               />
             </div>
             <div className="mb-4">
+              <label className="block text-sm mb-1 font-medium">Location</label>
+              <select
+                name="location"
+                className="w-full p-2 rounded text-gray-800 focus:ring-2 focus:ring-blue-300 focus:outline-none"
+                onChange={handleFilterChange}
+                value={filters.location}
+              >
+                <option value="">All</option>
+                <option value="Punto Verde">Punto Verde</option>
+                <option value="Living Lab">Living Lab</option>
+              </select>
+            </div>
+            <div className="mb-4">
               <label className="block text-sm mb-1 font-medium">Category</label>
               <select 
                 name="category" 
@@ -292,7 +343,7 @@ export default function POSAdminPage() {
             </div>
             <button 
               className="w-full bg-white text-blue-600 py-2 rounded font-medium hover:bg-gray-100 transition-colors mt-2 focus:outline-none focus:ring-2 focus:ring-white"
-              onClick={() => setFilters({ category: '', availability: '', priceRange: '' })}
+              onClick={() => setFilters({ category: '', availability: '', priceRange: '', location: '' })}
             >
               Clear Filters
             </button>
@@ -304,7 +355,7 @@ export default function POSAdminPage() {
               <h1 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-0">Products ({filteredProducts.length})</h1>
               <button
                 className="inline-flex items-center bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-green-300"
-                onClick={() => alert('Register a new product')}
+                onClick={openRegisterModal}
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
                   <path fillRule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clipRule="evenodd" />
