@@ -10,7 +10,7 @@ const UserProductPage = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get('https://back-db.vercel.app/api/products');
+        const response = await axios.get('http://localhost:3000/api/products');
         console.log(response);
         
         setProducts(response.data.products);

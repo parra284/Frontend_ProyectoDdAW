@@ -45,7 +45,7 @@ const InventoryReports = () => {
         setLoading(true);
         
         // Fetch products
-        const productsResponse = await axios.get('https://back-db.vercel.app/api/products');
+        const productsResponse = await axios.get('http://localhost:3000/api/products');
         if (productsResponse.status === 200 && productsResponse.data.products) {
           setProducts(productsResponse.data.products);
           

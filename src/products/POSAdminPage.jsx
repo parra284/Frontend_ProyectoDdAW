@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
 import Navbar from '../components/Navbar';
 import { useNavigate } from 'react-router-dom';
 import DeleteConfirmationModal from '../components/DeleteConfirmationModal';
 import { logProductDeletion } from '../utils/auditLogger';
-import NotificationSystem, { showNotification } from '../components/NotificationSystem';
+import apiClient from '../utils/apiClient';
+import { showNotification } from '../components/NotificationSystem';
 
 export default function POSAdminPage() {
   const [products, setProducts] = useState([]);
@@ -17,8 +17,7 @@ export default function POSAdminPage() {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [productToDelete, setProductToDelete] = useState(null);
   const navigate = useNavigate();
-  const itemsPerPage = 5;
-  useEffect(() => {
+  const itemsPerPage = 5;  useEffect(() => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
@@ -28,15 +27,16 @@ export default function POSAdminPage() {
           priceRange: filters.priceRange,
           keyword: searchQuery,
         });
-        const response = await fetch(`https://back-db.vercel.app/api/products?${queryParams}`);
-        if (!response.ok) throw new Error(`Failed to fetch products: ${response.statusText}`);
-        const data = await response.json();
+        
+        const response = await apiClient.get(`/products?${queryParams}`);
+        const data = response.data;
+        
         if (!Array.isArray(data.products)) throw new Error('Invalid data format');
         setProducts(data.products);
         setError(null);
       } catch (err) {
         console.error('Error fetching products:', err);
-        setError(err.message);
+        setError(err.response?.data?.message || err.message);
       } finally {
         setLoading(false);
       }
@@ -61,8 +61,7 @@ export default function POSAdminPage() {
   const cancelDelete = () => {
     setProductToDelete(null);
     setDeleteModalOpen(false);
-  };
-  const handleDelete = async (reason) => {
+  };  const handleDelete = async (reason) => {
     if (!productToDelete) return;
     
     const id = productToDelete.id;
@@ -71,47 +70,61 @@ export default function POSAdminPage() {
 
     try {
       setLoading(true);
+        // Call the API to delete the product using apiClient
+      await apiClient.delete(`/products/${id}`);
+
+      // Get user from localStorage
+      const user = JSON.parse(localStorage.getItem('user'));
+      const userId = user?.id || '1';  // Use the authenticated user's ID if available
       
-      // Call the API to delete the product
-      const response = await fetch(`https://back-db.vercel.app/api/products/${id}`, {
-        method: 'DELETE',
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to delete product');
-      }
-
-      // Log the deletion to the audit system - using '1' as a placeholder for userId
-      // In a real application, you would use the actual user ID from authentication
-      await logProductDeletion('1', productToDelete, reason);
+      // Log the deletion to the audit system
+      await logProductDeletion(userId, productToDelete, reason);
 
       // Update the products list in state
       setProducts((prevProducts) => prevProducts.filter((product) => product.id !== id));
-      
-      // Show success message using notification system
-      showNotification(`Product "${productName}" removed successfully!`, 'success', 3000);
+        // Show success message using notification system
+      showNotification(`Product "${productName}" removed successfully!`, 'success');
       
       setProductToDelete(null);
     } catch (err) {
       console.error('Error deleting product:', err);
-      showNotification(`Failed to delete product: ${err.message}`, 'error', 5000);
+      showNotification(`Failed to delete product: ${err.response?.data?.message || err.message}`, 'error');
+      
+      if (err.response?.status === 401) {
+        navigate('/login');
+      }
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleUpdate = async (id, updatedProduct) => {
+  };  const handleUpdate = async (id, updatedProduct) => {
     try {
-      const response = await axios.put(`https://back-db.vercel.app/api/products/${id}`, updatedProduct);
-      if (response.status === 200) {
-        alert('Product updated successfully!');
+      const user = JSON.parse(localStorage.getItem('user'));
+      
+      // Debug info
+      console.log('User role:', user?.role);
+      
+      const response = await apiClient.put(
+        `/products/${id}`,
+        updatedProduct
+      );
+        if (response.status === 200) {
+        showNotification('Product updated successfully!', 'success');
+        
         setProducts((prevProducts) =>
           prevProducts.map((product) => (product.id === id ? { ...product, ...updatedProduct } : product))
         );
       }
     } catch (error) {
       console.error('Error updating product:', error);
-      alert('Failed to update product. Please try again.');
+      
+      if (error.response && error.response.status === 401) {
+        showNotification('Authentication required. Please log in again.', 'error');
+        navigate('/login');
+      } else if (error.response && error.response.status === 403) {
+        showNotification('You do not have permission to update products.', 'error');
+      } else {
+        showNotification('Failed to update product. Please try again.', 'error');
+      }
     }
   };
 
@@ -162,7 +175,7 @@ export default function POSAdminPage() {
                 </svg>
               </div>
               <div className="ml-3">
-                <p className="text-red-700 text-sm">Error: {error}</p>
+                <p className="text-red-700 text-sm">Error: {typeof error === 'string' ? error : error?.message || 'An unknown error occurred'}</p>
               </div>
             </div>
           </div>

@@ -34,14 +34,14 @@ const InventoryDashboard = () => {
       setLoading(true);
       
       // Fetch products
-      const response = await axios.get('https://back-db.vercel.app/api/products');
+      const response = await axios.get('http://localhost:3000/api/products');
       if (response.status === 200 && response.data.products) {
         setProducts(response.data.products);
         setLastUpdate(new Date());
       }
 
       // Fetch inventory statistics
-      const statsResponse = await axios.get('https://back-db.vercel.app/api/products/inventory/statistics');
+      const statsResponse = await axios.get('http://localhost:3000/api/products/inventory/statistics');
       if (statsResponse.status === 200 && statsResponse.data.statistics) {
         setInventoryStats(statsResponse.data.statistics);
       }
@@ -121,7 +121,7 @@ const InventoryDashboard = () => {
     if (!productToDelete) return;
     
     try {
-      await axios.delete(`https://back-db.vercel.app/api/products/${productToDelete.id}`);
+      await axios.delete(`http://localhost:3000/api/products/${productToDelete.id}`);
       setProducts(products.filter(product => product.id !== productToDelete.id));
       showNotification('Product deleted successfully', 'success');
     } catch (err) {
@@ -188,7 +188,7 @@ const InventoryDashboard = () => {
   // Function to handle product deletion
   const handleDeleteProduct = async (productId) => {
     try {
-      await axios.delete(`https://back-db.vercel.app/api/products/${productId}`);
+      await axios.delete(`http://localhost:3000/api/products/${productId}`);
       setProducts(products.filter(product => product.id !== productId));
       logProductDeletion(productId);
       showNotification('Product deleted successfully', 'success');

@@ -4,12 +4,12 @@ import LogIn from './auth/LogIn';
 import ForbiddenAccess from './auth/ForbiddenAccess';
 import POSAdminPage from './products/POSAdminPage';
 import UserProductPage from './products/UserProductPage';
-import InventoryDashboard from './products/InventoryDashboardNew';
 import InventoryReports from './products/InventoryReports';
 import AuditLogPage from './products/AuditLogPage';
 import ProtectedRoute from "./auth/ProtectedRoute";
 import ResponsiveDemo from "./components/ResponsiveDemo";
 import NotificationSystem from "./components/NotificationSystem";
+import InventoryDashboard from "./products/InventoryDashboard";
 
 const routes = [
   { path: '/', element: <Navigate to="/login" replace /> },

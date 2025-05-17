@@ -118,7 +118,7 @@ const StockAdjustmentModal = ({
 
         // Call API to update stock in batch
         const response = await axios.post(
-          'https://back-db.vercel.app/api/products/inventory/batch-update',
+          'http://localhost:3000/api/products/inventory/batch-update',
           { 
             items: selectedProducts.map(id => ({
               id,
@@ -149,7 +149,7 @@ const StockAdjustmentModal = ({
       } else {
         // Single product update
         const response = await axios.patch(
-          `https://back-db.vercel.app/api/products/${product.id}/stock`,
+          `http://localhost:3000/api/products/${product.id}/stock`,
           { 
             quantity: finalQuantity,
             reason: reason

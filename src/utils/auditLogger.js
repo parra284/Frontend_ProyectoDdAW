@@ -1,7 +1,5 @@
 // Audit Logger for tracking system actions
-import axios from 'axios';
-
-const API_URL = 'https://back-db.vercel.app/api';
+import apiClient from './apiClient';
 
 export const LogType = {
   INFO: 'INFO',
@@ -29,7 +27,7 @@ export const LogAction = {
  */
 export const logAuditEvent = async (action, userId, details = '', metadata = {}) => {
   try {
-    const response = await axios.post(`${API_URL}/audit-logs`, {
+    const response = await apiClient.post('/audit-logs', {
       action,
       userId,
       details,
