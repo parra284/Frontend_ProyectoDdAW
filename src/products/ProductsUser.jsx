@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import apiClient from '../utils/apiClient';
 import Navbar from '../components/Navbar';
 
-const UserProductPage = () => {
+const ProductsUser = () => {
   const [products, setProducts] = useState([]);
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [showFilters, setShowFilters] = useState(false);
@@ -312,4 +312,4 @@ const UserProductPage = () => {
   );
 };
 
-export default UserProductPage;
+export default ProductsUser;

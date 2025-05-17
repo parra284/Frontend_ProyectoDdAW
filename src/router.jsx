@@ -2,14 +2,14 @@ import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom"
 import SignUp from './auth/SignUp';
 import LogIn from './auth/LogIn';
 import ForbiddenAccess from './auth/ForbiddenAccess';
-import POSAdminPage from './products/POSAdminPage';
-import UserProductPage from './products/UserProductPage';
 import InventoryReports from './products/InventoryReports';
 import AuditLogPage from './products/AuditLogPage';
 import ProtectedRoute from "./auth/ProtectedRoute";
 import ResponsiveDemo from "./components/ResponsiveDemo";
 import NotificationSystem from "./components/NotificationSystem";
 import InventoryDashboard from "./products/InventoryDashboard";
+import ProductsPOS from "./products/ProductsPOS";
+import ProductsUser from "./products/ProductsUser"
 
 const routes = [
   { path: '/', element: <Navigate to="/login" replace /> },
@@ -17,7 +17,7 @@ const routes = [
   { path: '/login', element: <LogIn /> },
   { 
     path: '/products', 
-    element: <ProtectedRoute elements={[<POSAdminPage />, <UserProductPage/>]} roles={['POS','user']}/> 
+    element: <ProtectedRoute elements={[<ProductsPOS />, <ProductsUser />]} roles={['POS','user']}/> 
   },
   { path: '/forbidden', element: <ForbiddenAccess /> },
   { path: '/responsive-demo', element: <ResponsiveDemo /> },
@@ -30,9 +30,9 @@ const router = createBrowserRouter(routes);
 
 export default function Router() {
   return (
-      <>
-          <NotificationSystem position="bottom-right" />
-          <RouterProvider router={router} />
-      </> 
+    <>
+      <NotificationSystem position="bottom-right" />
+      <RouterProvider router={router} />
+    </> 
   );
 }

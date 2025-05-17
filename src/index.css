@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+@theme {
+  --color-dark-blue: #1E3A8A;
+}
+
 /* Add custom background styles for Log In and Sign Up */
 .bg-login {
     background-image: url('./assets/1.jpg');
@@ -7,14 +11,6 @@
 
 .bg-signup {
     background-image: url('./assets/2.jpg');
-}
-
-.bg-dark-blue {
-  background-color: #1E3A8A; /* A visible dark blue color */
-}
-
-.text-dark-blue {
-  color: #1E3A8A;
 }
 
 @media (max-width: 768px) {

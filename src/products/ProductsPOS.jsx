@@ -7,7 +7,7 @@ import { logProductDeletion } from '../utils/auditLogger';
 import apiClient from '../utils/apiClient';
 import { showNotification } from '../components/NotificationSystem';
 
-export default function POSAdminPage() {
+export default function ProductsPOS() {
   const [products, setProducts] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [filters, setFilters] = useState({ category: '', availability: '', priceRange: '', location: '' });
