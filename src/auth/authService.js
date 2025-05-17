@@ -2,8 +2,7 @@ import apiClient from '../utils/apiClient';
 
 export async function signUp(data) {
   try {
-    const response = await apiClient.post('/users', data);
-    return response.data;
+    await apiClient.post('/users', data);
   } catch (error) {
     console.error('Signup error:', error.response?.data || error.message);
     throw new Error(error.response?.data?.message || 'Signup failed');
@@ -18,8 +17,6 @@ export async function login(data) {
     if (response.data.accessToken) {
       localStorage.setItem('accessToken', response.data.accessToken);
     }
-    
-    return response.data;
   } catch (error) {
     console.error('Login error:', error.response?.data || error.message);
     throw new Error(error.response?.data?.message || 'Login failed');

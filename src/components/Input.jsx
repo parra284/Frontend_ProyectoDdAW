@@ -13,13 +13,13 @@ const Input = ({ name, label, value, onChange, error, required = false, type }) 
         </label>
       )}
       <input
-        className={`bg-input p-2 sm:p-2.5 rounded-lg w-full border ${error ? 'border-red-500 focus:ring-red-300 focus:border-red-300' : 'border-gray-300 focus:ring-blue-300 focus:border-blue-300'} focus:ring-2 outline-none text-sm sm:text-base`}
+        className={`bg-input p-3 sm:p-2.5 rounded-lg w-full border ${error ? 'border-red-500 focus:ring-red-300 focus:border-red-300' : 'border-gray-300 focus:ring-blue-300 focus:border-blue-300'} focus:ring-2 outline-none text-base sm:text-base`}
         id={name}
         name={name}
         value={value}
         onChange={onChange}
         placeholder={label}
-        type={type || (name === "password" ? "password" : "text")}
+        type={type || "text"}
         aria-invalid={error ? "true" : "false"}
         aria-describedby={error ? errorId : undefined}
         required={required}

@@ -42,31 +42,30 @@ export default function Form({ type, onSubmit, fields }) {
   };
 
   return (
-    
-      <form
-        className='w-full flex flex-col items-center'
-        onSubmit={handleFormSubmit}
-        aria-labelledby="form-title"
-      >
-        <h2 id="form-title" className='text-dark-blue text-2xl sm:text-3xl font-bold mb-4 sm:mb-6'>{type}</h2>
-        <div className="w-full space-y-4">
-          {fields.map(field => (
-            <Input
-              key={field.name}
-              name={field.name}
-              label={field.label}
-              value={values[field.name]}
-              onChange={handleChange}
-              error={errors[field.name]}
-              required={field.required}
-              type={field.name === "password" ? "password" : "text"}
-            />
-          ))}
-        </div>
-        <div className="w-full mt-6">
-          <Button type="submit" label={type} />
-        </div>
-      </form>
-    
+    <form
+      className="w-full flex flex-col items-center px-2 sm:px-0"
+      onSubmit={handleFormSubmit}
+      aria-labelledby="form-title"
+    >
+      <h2 id="form-title" className="text-dark-blue text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 text-center">{type}</h2>
+      <div className="w-full space-y-4">
+        {fields.map(field => (
+          <Input
+            key={field.name}
+            name={field.name}
+            label={field.label}
+            value={values[field.name]}
+            onChange={handleChange}
+            error={errors[field.name]}
+            required={field.required}
+            type={field.type}
+          />
+        ))}
+      </div>
+      <div className="w-full mt-6">
+        <Button type="submit" label={type} />
+      </div>
+    </form>
   );
+
 }
