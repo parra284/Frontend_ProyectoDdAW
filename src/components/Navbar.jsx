@@ -16,12 +16,9 @@ export default function Navbar( { buttons }) {
     localStorage.removeItem('shoppingCart');
   };
 
-  const handleButtonClick = (button) => {
-    navigate(button.path)
-  };
-
   return (
-    <div className="bg-dark-blue h-15 flex items-center justify-between px-4" role="navigation" aria-label="Main Navigation">
+    <div className="fixed top-0 left-0 w-full bg-dark-blue h-15 flex items-center justify-between px-4 z-50" 
+    role="navigation" aria-label="Main Navigation">
       {buttons && buttons.length > 0 && (
         <div>
           {buttons.map((button, index) => (
@@ -30,7 +27,7 @@ export default function Navbar( { buttons }) {
               className={`text-white font-semibold hover:text-gray-200 m-5 hover:cursor-pointer ${
                 location.pathname === button.path ? "underline" : ""
               }`} // Add underline if selected
-              onClick={() => handleButtonClick(button)}
+              onClick={button.action}
             >
               {button.label}
             </button>
@@ -49,25 +46,23 @@ export default function Navbar( { buttons }) {
       {isModalOpen && (
         <div
           id="profile-modal"
-          className="fixed top-10 end-5 flex flex-col justify-center items-center border-2 border-white rounded bg-gradient-to-r from-blue-500 to-dark-blue p-10 shadow-md"
-          role="dialog"
+          className="absolute right-5 top-16 bg-white text-black rounded shadow-lg py-2 w-48"
+          role="menu"
           aria-labelledby="profile-title"
-          aria-describedby="profile-description"
         >
-          <h2 id="profile-title" className="text-lg font-bold text-white">
-            Profile
-          </h2>
-          <p id="profile-description" className="text-sm text-gray-300">
-            Manage your account settings here.
-          </p>
+          <div className="px-4 py-2 text-sm font-medium border-b border-gray-200">
+            <h2 id="profile-title">Profile</h2>
+          </div>
           <button
-            className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-300 shadow-md hover:cursor-pointer"
             onClick={handleLogout}
+            className="w-full text-left px-4 py-2 text-red-600 hover:bg-red-100"
+            role="menuitem"
           >
             Log Out
           </button>
         </div>
       )}
+
     </div>
   );
 }

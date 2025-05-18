@@ -1,17 +1,13 @@
 import { useState } from 'react';
-import Navbar from '../components/Navbar';
 import { useNavigate } from 'react-router-dom';
+import Navbar from '../components/Navbar';
 import DeleteConfirmationModal from '../components/DeleteConfirmationModal';
 import RegisterProductModal from '../components/RegisterProductModal';
 import { logProductDeletion } from '../utils/auditLogger';
 import { showNotification } from '../components/NotificationSystem';
 import Sidebar from '../components/Sidebar';
 import ProductsSection from './ProductsSection';
-import {
-  deleteProduct as deleteProductApi,
-  updateProduct as updateProductApi,
-  registerProduct as registerProductApi
-} from './productsService';
+import { deleteProduct as deleteProductApi, updateProduct as updateProductApi, registerProduct as registerProductApi } from './productsService';
 
 export default function ProductsPOS() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -24,15 +20,17 @@ export default function ProductsPOS() {
   const buttons = [
     {
       label: "Products",
-      path: "/products"
+      action: () => navigate("/products")
     },
     {
       label: "Orders",
-      path: "/orders"
+      action: () => navigate("/orders")
     },
   ];
 
   const handleSearch = (e) => {
+    console.log(e);
+    
     setSearchQuery(e.target.value);
   };
 
@@ -41,7 +39,6 @@ export default function ProductsPOS() {
     setFilters((prevFilters) => ({ ...prevFilters, [name]: value }));
   };
 
-  const openRegisterModal = () => setRegisterModalOpen(true);
   const closeRegisterModal = () => setRegisterModalOpen(false);
 
   const initiateProductDelete = (product) => {
@@ -63,7 +60,6 @@ export default function ProductsPOS() {
     setDeleteModalOpen(false);
 
     try {
-      // Call the API to delete the product using the service
       await deleteProductApi(id);
 
       // Get user from localStorage
@@ -89,9 +85,6 @@ export default function ProductsPOS() {
 
   const handleUpdate = async (id, updatedProduct, refetchProducts) => {
     try {
-      const user = JSON.parse(localStorage.getItem('user'));
-      console.log('User role:', user?.role);
-
       const response = await updateProductApi(id, updatedProduct);
       if (response.status === 200) {
         showNotification('Product updated successfully!', 'success');
@@ -127,16 +120,16 @@ export default function ProductsPOS() {
     }
   };
 
+  const clearFilters = () => {
+    setFilters({ category: '', availability: '', priceRange: '', location: '' });
+    setSearchQuery('')
+  }
+
   const extraButtons = [
     {
       label: "Register Product",
-      onClick: openRegisterModal,
-      className: "inline-flex items-center bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-green-300",
-      icon: (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-          <path fillRule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clipRule="evenodd" />
-        </svg>
-      )
+      onClick: () => setRegisterModalOpen(true),
+      className: "inline-flex items-center bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-green-300"
     }
   ];
 
@@ -162,7 +155,7 @@ export default function ProductsPOS() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar buttons={buttons} />
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-7xl mx-auto mt-15">
         {/* Notification element - hidden by default */}
         <div id="notification" style={{ display: 'none' }} className="fixed bottom-4 right-4 bg-green-600 text-white px-6 py-3 rounded shadow-lg"></div>
 
@@ -190,7 +183,7 @@ export default function ProductsPOS() {
             handleSearch={handleSearch}
             filters={filters}
             handleFilterChange={handleFilterChange}
-            clearFilters={() => setFilters({ category: '', availability: '', priceRange: '', location: '' })}
+            clearFilters={clearFilters}
           />
 
           {/* Main Content */}

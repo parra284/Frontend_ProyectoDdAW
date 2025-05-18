@@ -36,29 +36,11 @@ apiClient.interceptors.response.use(
   (response) => {
     return response;
   },
-  async (error) => {
-    const originalRequest = error.config;
-    
-    // If error is 401 (Unauthorized) and we haven't tried to refresh token yet
-    if (error.response?.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true;
-      
-      // Try to refresh token
-      const refreshed = await refreshTokenIfNeeded();
-      
-      if (refreshed) {
-        // Update token in header
-        const newToken = localStorage.getItem('accessToken');
-        originalRequest.headers['Authorization'] = `Bearer ${newToken}`;
-        
-        // Retry the original request
-        return apiClient(originalRequest);
-      }
-      
-      // If token refresh failed, redirect to login
+  (error) => {
+    // If error is 401 (Unauthorized), redirect to login
+    if (error.response?.status === 401) {
       window.location.href = '/login';
     }
-    
     return Promise.reject(error);
   }
 );

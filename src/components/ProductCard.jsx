@@ -1,8 +1,4 @@
-export default function ProductCard({
-  product,
-  setProducts,
-  cardButtons
-}) {
+export default function ProductCard({ product, setProducts, cardButtons }) {
   return (
     <div className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition duration-200">
       <div className="relative">
