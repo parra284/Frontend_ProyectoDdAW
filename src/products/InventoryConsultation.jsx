@@ -1,7 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
 import debounce from 'lodash.debounce';
-import { MapContainer, TileLayer, Marker } from 'react-leaflet';
-import 'leaflet/dist/leaflet.css';
 import apiClient from '../utils/apiClient';
 import Navbar from '../components/Navbar';
 import axios from 'axios';
@@ -12,7 +10,7 @@ import ShoppingCart from './ShoppingCart';
 import ProductDetailPage from './ProductDetailPage';
 import NotificationSystem, { showNotification } from '../components/NotificationSystem';
 
-const ProductsUser = () => {
+const InventoryConsultation = () => {
   const [products, setProducts] = useState([]);
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -53,7 +51,7 @@ const ProductsUser = () => {
     },
   ];
 
-  const fetchProducts = async () => {
+  const fetchProducts = useCallback(async () => {
     try {
       setLoading(true);
       setIsRetrying(false);
@@ -98,10 +96,11 @@ const ProductsUser = () => {
       setLoading(false);
       setIsRetrying(false);
     }
-  };
+  }, [filters, searchQuery, isRetrying]);
+
   useEffect(() => {
     fetchProducts();
-  }, [filters, searchQuery]); // fetchProducts is defined in component scope, no need to include in deps
+  }, [fetchProducts]);
 
   const handleSearch = debounce((query) => {
     setSearchQuery(query);
@@ -558,4 +557,4 @@ const ProductsUser = () => {
   );
 };
 
-export default ProductsUser;
+export default InventoryConsultation;

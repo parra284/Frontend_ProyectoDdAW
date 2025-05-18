@@ -14,7 +14,12 @@ export const LogAction = {
   PRODUCT_DELETED: 'PRODUCT_DELETED',
   STOCK_ADJUSTED: 'STOCK_ADJUSTED',
   USER_LOGIN: 'USER_LOGIN',
-  USER_LOGOUT: 'USER_LOGOUT'
+  USER_LOGOUT: 'USER_LOGOUT',
+  ORDER_CREATED: 'ORDER_CREATED',
+  ORDER_UPDATED: 'ORDER_UPDATED',
+  ORDER_CANCELLED: 'ORDER_CANCELLED',
+  ORDER_STATUS_CHANGED: 'ORDER_STATUS_CHANGED',
+  ORDER_PAYMENT_COMPLETED: 'ORDER_PAYMENT_COMPLETED'
 };
 
 /**
@@ -27,32 +32,18 @@ export const LogAction = {
  */
 export const logAuditEvent = async (action, userId, details = '', metadata = {}) => {
   try {
-    const response = await apiClient.post('/audit-logs', {
+    const response = await apiClient.post('/api/audit-logs', {
       action,
       userId,
       details,
       metadata,
       timestamp: new Date().toISOString()
     });
-    
     return response.data;
   } catch (error) {
-    // Still log to console if API fails
     console.error('Failed to log audit event:', error);
-    console.info('Audit event details:', { action, userId, details, metadata });
-    
-    // Store in localStorage as backup if API is unavailable
-    const auditBackupLogs = JSON.parse(localStorage.getItem('auditBackupLogs') || '[]');
-    auditBackupLogs.push({
-      action,
-      userId,
-      details,
-      metadata,
-      timestamp: new Date().toISOString(),
-      syncStatus: 'PENDING'
-    });
-    localStorage.setItem('auditBackupLogs', JSON.stringify(auditBackupLogs));
-    
+    // Don't throw the error, just log it to the console
+    // This way, if audit logging fails, it doesn't break the application
     return null;
   }
 };
@@ -132,10 +123,72 @@ export const logStockAdjustment = async (userId, product, quantity, reason = '')
   );
 };
 
+/**
+ * Log an order-related action
+ * @param {string} userId - The ID of the user performing the action
+ * @param {string} orderId - The ID of the order
+ * @param {string} description - Description of the action
+ * @param {object} metadata - Additional metadata about the action
+ * @returns {Promise<object>} - The response from the server
+ */
+export const logOrderAction = async (userId, orderId, description, metadata = {}) => {
+  try {
+    const response = await apiClient.post('/api/audit-logs', {
+      entityType: 'order',
+      entityId: orderId,
+      userId,
+      action: 'order_action',
+      description,
+      metadata
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Failed to log order action:', error);
+    return null;
+  }
+};
+
+/**
+ * Log an order status change
+ * @param {string} userId - The ID of the user performing the action
+ * @param {string} orderId - The ID of the order
+ * @param {string} previousStatus - The previous status
+ * @param {string} newStatus - The new status
+ * @returns {Promise<object>} - The response from the server
+ */
+export const logOrderStatusChange = async (userId, orderId, previousStatus, newStatus) => {
+  const description = `Order status changed from ${previousStatus} to ${newStatus}`;
+  return logOrderAction(userId, orderId, description, {
+    action: 'status_change',
+    previousStatus,
+    newStatus,
+    timestamp: new Date().toISOString()
+  });
+};
+
+/**
+ * Log an order cancellation
+ * @param {string} userId - The ID of the user cancelling the order
+ * @param {string} orderId - The ID of the order
+ * @param {string} reason - The reason for cancellation
+ * @returns {Promise<object>} - The response from the server
+ */
+export const logOrderCancellation = async (userId, orderId, reason = '') => {
+  const description = reason ? `Order cancelled: ${reason}` : 'Order cancelled';
+  return logOrderAction(userId, orderId, description, {
+    action: 'order_cancelled',
+    reason,
+    timestamp: new Date().toISOString()
+  });
+};
+
 export default {
   logAuditEvent,
   logProductDeletion,
   logStockAdjustment,
+  logOrderAction,
+  logOrderStatusChange,
+  logOrderCancellation,
   LogType,
   LogAction
 };
