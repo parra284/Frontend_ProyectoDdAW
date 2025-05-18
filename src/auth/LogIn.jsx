@@ -26,12 +26,11 @@ export default function LogIn() {
           type="Log In" 
           onSubmit={onSubmit} 
           fields={fields}
-        />
-        <p className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-2 mt-4 sm:mt-6 text-center">
+        />        <p className="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-2 mt-4 sm:mt-6 text-center font-ginora">
           <span>Don't have an account?</span>
           <a
             href="/signup"
-            className="text-blue-500 underline hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300"
+            className="text-primary underline hover:text-secondary focus:outline-none focus:ring-2 focus:ring-primary"
           >
             Sign Up
           </a>

@@ -1,6 +1,12 @@
 import { useEffect, useState } from 'react';
+import debounce from 'lodash.debounce';
+import { MapContainer, TileLayer, Marker } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
 import apiClient from '../utils/apiClient';
 import Navbar from '../components/Navbar';
+import axios from 'axios';
+import ResponsiveContainer from '../components/ResponsiveContainer';
+import ResponsiveHelper from '../components/ResponsiveHelper';
 
 const ProductsUser = () => {
   const [products, setProducts] = useState([]);
@@ -9,29 +15,49 @@ const ProductsUser = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [filters, setFilters] = useState({ location: '' });
   const [showCart, setShowCart] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const user = JSON.parse(localStorage.getItem('user')) || {}; // Retrieve user info
+  const userRole = user.role || 'guest'; // Default to 'guest' if no role is found;
+
+  const buttons = [
+    {
+      label: "Products",
+      path: "/products",
+      roles: ["user"]
+    },
+    {
+      label: "Cart",
+      path: "/cart",
+      roles: ["user"]
+    },
+  ];
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
+        setLoading(true);
         const response = await axios.get('http://localhost:3000/api/products');
-        console.log(response);
-        
         setProducts(response.data.products);
       } catch (err) {
         console.error('Error fetching products:', err);
+        setError('Failed to load products. Please try again later.');
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchProducts();
   }, []);
 
-  const handleSearch = (e) => {
-    setSearchQuery(e.target.value);
-  };
+  const handleSearch = debounce((query) => {
+    setSearchQuery(query);
+  }, 300);
 
-  const handleFilterChange = (e) => {
-    const { name, value } = e.target;
-    setFilters((prev) => ({ ...prev, [name]: value }));
+  const handleMapLocationClick = (e) => {
+    const { lat, lng } = e.latlng;
+    setFilters((prev) => ({ ...prev, location: `${lat},${lng}` }));
   };
 
   const handleProductSelection = (productId, quantity = 1) => {
@@ -95,15 +121,21 @@ const ProductsUser = () => {
   }
 };
 
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div className="text-red-500">{error}</div>;
+  }
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Navbar />
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
-        <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
-          <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-3 sm:mb-0">Products</h1>
-          <div className="flex items-center space-x-2">
-            <button
-              className="relative bg-white border border-blue-600 text-blue-600 px-3 py-1.5 rounded-lg hover:bg-blue-50 transition duration-200 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500"
+    <ResponsiveContainer className="p-4">
+      <Navbar buttons={buttons} userRole={userRole} />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">        <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
+          <h1 className="text-xl sm:text-2xl lg:text-3xl font-bebas text-primary mb-3 sm:mb-0">Products</h1>
+          <div className="flex items-center space-x-2">            <button
+              className="relative bg-white border border-primary text-primary px-3 py-1.5 rounded-lg hover:bg-primary/10 transition duration-200 text-sm font-ginora focus:outline-none focus:ring-2 focus:ring-primary"
               onClick={() => setShowCart((prev) => !prev)}
               title="View Cart"
             >
@@ -112,7 +144,7 @@ const ProductsUser = () => {
               </svg>
               <span className="ml-1">Cart</span>
               {selectedProducts.length > 0 && (
-                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-1.5">{selectedProducts.length}</span>
+                <span className="absolute -top-2 -right-2 bg-secondary text-white text-xs rounded-full px-1.5">{selectedProducts.length}</span>
               )}
             </button>
             <button
@@ -217,23 +249,28 @@ const ProductsUser = () => {
                 <input
                   className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Search products..."
-                  value={searchQuery}
-                  onChange={handleSearch}
+                  onChange={(e) => handleSearch(e.target.value)}
                 />
               </div>
-              <div className="sm:flex-1">
-                <label className="block text-sm font-medium text-gray-700 mb-1">Location</label>
-                <select
-                  name="location"
-                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-                  value={filters.location}
-                  onChange={handleFilterChange}
-                >
-                  <option value="">All Locations</option>
-                  <option value="Punto Verde">Punto Verde</option>
-                  <option value="Living Lab">Living Lab</option>
-                </select>
-              </div>
+            </div>
+            <div className="mt-4">
+              <label className="block text-sm font-medium text-gray-700 mb-1">Filter by Location</label>
+              <MapContainer
+                center={[51.505, -0.09]}
+                zoom={13}
+                style={{ height: '300px', width: '100%' }}
+                onClick={handleMapLocationClick}
+              >
+                <TileLayer
+                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                  attribution="&copy; <a href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors"
+                />
+                {filters.location && (
+                  <Marker
+                    position={filters.location.split(',').map(Number)}
+                  />
+                )}
+              </MapContainer>
             </div>
           </div>
         )}
@@ -308,7 +345,8 @@ const ProductsUser = () => {
           </button>
         </div>
       </div>
-    </div>
+      <ResponsiveHelper enabled={true} />
+    </ResponsiveContainer>
   );
 };
 

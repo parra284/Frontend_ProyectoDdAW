@@ -1,0 +1,184 @@
+@import "tailwindcss";
+
+/* ====== VARIABLES DEL SISTEMA DE DISEÑO ====== */
+/**
+ * Tabla de Variables del Sistema de Diseño
+ * 
+ * | Tipo                   | Clave Tailwind      | Valor                         | Descripción y uso                                                 |
+ * | ---------------------- | ------------------- | ----------------------------- | ----------------------------------------------------------------- |
+ * | **Color primario**     | `primary`           | `#002661`                     | Azul institucional (logotipo)                   |
+ * | **Color secundario**   | `secondary`         | `#96272D`                     | Rojo institucional (logotipo)                   |
+ * | **Color terciario**    | `tertiary`          | `#D6B371`                     | Amarillo/dorado triada (logotipo)               |
+ * | **Fuente títulos**     | `fontFamily.bebas`  | `['Bebas Kai', sans‑serif]`   | Tipografía Bebas Kai para titulares             |
+ * | **Fuente cuerpo**      | `fontFamily.ginora` | `['Ginóra Sans', sans‑serif]` | Tipografía Ginóra Sans para subtítulos y texto  |
+ */
+:root {
+  /* Colores */
+  --color-primary: #002661; /* Azul institucional (logotipo) */
+  --color-secondary: #96272D; /* Rojo institucional (logotipo) */
+  --color-tertiary: #D6B371; /* Amarillo/dorado triada (logotipo) */
+  
+  /* Tipografía */
+  --font-bebas: 'Bebas Kai', sans-serif; /* Tipografía Bebas Kai para titulares */
+  --font-ginora: 'Ginóra Sans', sans-serif; /* Tipografía Ginóra Sans para subtítulos y texto */
+  
+  /* Espaciado */
+  --spacing-1: 0.25rem; /* 4px */
+  --spacing-2: 0.5rem;  /* 8px */
+  --spacing-3: 0.75rem; /* 12px */
+  --spacing-4: 1rem;    /* 16px */
+  --spacing-5: 1.25rem; /* 20px */
+  --spacing-6: 1.5rem;  /* 24px */
+  --spacing-8: 2rem;    /* 32px */
+  
+  /* Border Radius */
+  --border-radius-none: 0;
+  --border-radius-sm: 0.125rem; /* 2px */
+  --border-radius-md: 0.375rem; /* 6px */
+  --border-radius-lg: 0.5rem;   /* 8px */
+  --border-radius-xl: 0.75rem;  /* 12px */
+  --border-radius-2xl: 1rem;    /* 16px */
+  
+  /* Variables adicionales para compatibilidad */
+  --primary: #002661;
+  --secondary: #96272D;
+  --tertiary: #D6B371;
+  --color-dark-blue: #1E3A8A; /* Legacy para compatibilidad */
+}
+
+/* ====== CLASES DE UTILIDAD PARA FUENTES ====== */
+.font-bebas {
+  font-family: var(--font-bebas);
+}
+
+.font-ginora {
+  font-family: var(--font-ginora);
+}
+
+/* ====== CLASES DE UTILIDAD PARA COLORES ====== */
+.text-primary {
+  color: var(--color-primary);
+}
+
+.text-secondary {
+  color: var(--color-secondary);
+}
+
+.text-tertiary {
+  color: var(--color-tertiary);
+}
+
+.bg-primary {
+  background-color: var(--color-primary);
+}
+
+.bg-secondary {
+  background-color: var(--color-secondary);
+}
+
+.bg-tertiary {
+  background-color: var(--color-tertiary);
+}
+
+.border-primary {
+  border-color: var(--color-primary);
+}
+
+.border-secondary {
+  border-color: var(--color-secondary);
+}
+
+.border-tertiary {
+  border-color: var(--color-tertiary);
+}
+
+/* Font utilities */
+.bebas {
+  font-family: 'Bebas Kai', sans-serif;
+}
+
+.ginora {
+  font-family: 'Ginóra Sans', sans-serif;
+}
+
+/* ====== ESTILOS PARA PAGES ESPECÍFICAS ====== */
+/* Estilos para Login y Signup */
+.bg-login {
+  background-image: url('./assets/1.jpg');
+  background-size: cover;
+  background-position: center;
+}
+
+.bg-signup {
+  background-image: url('./assets/2.jpg');
+  background-size: cover;
+  background-position: center;
+}
+
+@media (max-width: 768px) {
+  .bg-login {
+    background-image: url('./assets/1.jpg');
+    background-size: cover;
+    background-position: center;
+  }
+
+  .bg-signup {
+    background-image: url('./assets/2.jpg');
+    background-size: cover;
+    background-position: center;
+  }
+}
+
+/* ====== ESTILOS PARA RECENT ORDERS ====== */
+.recent-orders {
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: var(--border-radius-lg);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.recent-orders h2 {
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+  font-family: var(--font-bebas);
+  color: var(--color-primary);
+}
+
+.recent-orders .error {
+  color: var(--color-secondary);
+  font-weight: bold;
+  font-family: var(--font-ginora);
+}
+
+.recent-orders ul {
+  list-style: none;
+  padding: 0;
+}
+
+.recent-orders .order-item {
+  padding: 15px;
+  margin-bottom: 10px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: var(--border-radius-md);
+  font-family: var(--font-ginora);
+}
+
+.recent-orders .order-item div {
+  margin-bottom: 5px;
+}
+
+.recent-orders .order-item strong {
+  color: var(--color-primary);
+}
+
+/* ====== ESTILOS BACKEND (SOLO SI ES NECESARIO) ====== */
+body.backend {
+  padding: 50px;
+  font-family: var(--font-ginora), "Lucida Grande", Helvetica, Arial, sans-serif;
+  font-size: 14px;
+}
+
+.backend a {
+  color: var(--color-primary);
+}

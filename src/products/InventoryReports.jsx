@@ -154,15 +154,15 @@ const InventoryReports = () => {
       {
         label: 'Current Stock',
         data: products.slice(0, 10).map(product => product.stock),
-        backgroundColor: 'rgba(54, 162, 235, 0.5)',
-        borderColor: 'rgba(54, 162, 235, 1)',
+        backgroundColor: 'rgba(0, 38, 97, 0.5)', // primary color with opacity
+        borderColor: 'rgba(0, 38, 97, 1)', // primary color
         borderWidth: 1
       },
       {
         label: 'Low Stock Threshold',
         data: products.slice(0, 10).map(product => product.lowStockThreshold || 10),
-        backgroundColor: 'rgba(255, 99, 132, 0.5)',
-        borderColor: 'rgba(255, 99, 132, 1)',
+        backgroundColor: 'rgba(150, 39, 45, 0.5)', // secondary color with opacity
+        borderColor: 'rgba(150, 39, 45, 1)', // secondary color
         borderWidth: 1
       }
     ]
@@ -176,18 +176,18 @@ const InventoryReports = () => {
         label: 'Products by Category',
         data: categoryData.data,
         backgroundColor: [
-          'rgba(255, 99, 132, 0.6)',
-          'rgba(54, 162, 235, 0.6)',
-          'rgba(255, 206, 86, 0.6)',
+          'rgba(0, 38, 97, 0.6)',     // primary
+          'rgba(150, 39, 45, 0.6)',   // secondary
+          'rgba(214, 179, 113, 0.6)', // tertiary
           'rgba(75, 192, 192, 0.6)',
           'rgba(153, 102, 255, 0.6)',
           'rgba(255, 159, 64, 0.6)',
           'rgba(199, 199, 199, 0.6)'
         ],
         borderColor: [
-          'rgba(255, 99, 132, 1)',
-          'rgba(54, 162, 235, 1)',
-          'rgba(255, 206, 86, 1)',
+          'rgba(0, 38, 97, 1)',     // primary
+          'rgba(150, 39, 45, 1)',   // secondary
+          'rgba(214, 179, 113, 1)', // tertiary
           'rgba(75, 192, 192, 1)',
           'rgba(153, 102, 255, 1)',
           'rgba(255, 159, 64, 1)',
@@ -322,8 +322,8 @@ const InventoryReports = () => {
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <header className="mb-6">
-          <h1 className="text-2xl font-bold text-gray-900">Inventory Reports & Analytics</h1>
-          <p className="mt-1 text-sm text-gray-600">
+          <h1 className="text-2xl font-bebas text-primary">Inventory Reports & Analytics</h1>
+          <p className="mt-1 text-sm font-ginora text-gray-600">
             Gain insights into your inventory status and movement trends
           </p>
         </header>
@@ -361,16 +361,16 @@ const InventoryReports = () => {
           <>
             {/* Report Selection */}
             <div className="bg-white shadow rounded-lg p-4 mb-6">
-              <h2 className="text-lg font-medium text-gray-900 mb-4">Report Options</h2>
+              <h2 className="text-lg font-medium text-primary font-bebas mb-4">Report Options</h2>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label htmlFor="reportType" className="block text-sm font-medium text-gray-700">
+                  <label htmlFor="reportType" className="block text-sm font-medium text-gray-700 font-ginora">
                     Report Type
                   </label>
                   <select
                     id="reportType"
-                    className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
+                    className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm rounded-lg font-ginora"
                     value={reportType}
                     onChange={(e) => setReportType(e.target.value)}
                   >
@@ -383,12 +383,12 @@ const InventoryReports = () => {
                 
                 {reportType === 'stockMovement' && (
                   <div>
-                    <label htmlFor="dateRange" className="block text-sm font-medium text-gray-700">
+                    <label htmlFor="dateRange" className="block text-sm font-medium text-gray-700 font-ginora">
                       Date Range
                     </label>
                     <select
                       id="dateRange"
-                      className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
+                      className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm rounded-lg font-ginora"
                       value={dateRange}
                       onChange={(e) => setDateRange(e.target.value)}
                     >

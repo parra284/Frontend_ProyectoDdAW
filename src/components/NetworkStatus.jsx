@@ -29,11 +29,11 @@ const NetworkStatus = ({ status = 'online', onRetry, showRetry = true, className
       case 'online':
         return 'bg-green-100 text-green-800 border-green-300';
       case 'offline':
-        return 'bg-red-100 text-red-800 border-red-300';
+        return 'bg-red-100 text-secondary border-secondary/30';
       case 'server-error':
-        return 'bg-yellow-100 text-yellow-800 border-yellow-300';
+        return 'bg-tertiary/20 text-tertiary border-tertiary/30';
       case 'loading':
-        return 'bg-blue-100 text-blue-800 border-blue-300';
+        return 'bg-primary/10 text-primary border-primary/30';
       default:
         return 'bg-gray-100 text-gray-800 border-gray-300';
     }

@@ -61,19 +61,19 @@ const AuditLogViewer = () => {
   
   return (
     <div className="bg-white shadow rounded-lg p-6">
-      <h2 className="text-2xl font-bold mb-6 text-gray-800">Product Removal Audit Logs</h2>
+      <h2 className="text-2xl font-bebas mb-6 text-primary">Product Removal Audit Logs</h2>
       
       {/* Search and filters */}
       <form onSubmit={handleSearch} className="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
         <div>
-          <label htmlFor="searchQuery" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="searchQuery" className="block text-sm font-ginora font-medium text-gray-700 mb-1">
             Search
           </label>
           <input
             type="text"
             id="searchQuery"
             name="searchQuery"
-            className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+            className="w-full p-2 border border-gray-300 rounded-lg font-ginora focus:ring-primary focus:border-primary"
             placeholder="Search by product name, ID, reason..."
             value={filters.searchQuery}
             onChange={handleFilterChange}
@@ -81,28 +81,28 @@ const AuditLogViewer = () => {
         </div>
         
         <div>
-          <label htmlFor="startDate" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="startDate" className="block text-sm font-ginora font-medium text-gray-700 mb-1">
             From Date
           </label>
           <input
             type="date"
             id="startDate"
             name="startDate"
-            className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+            className="w-full p-2 border border-gray-300 rounded-lg font-ginora focus:ring-primary focus:border-primary"
             value={filters.startDate}
             onChange={handleFilterChange}
           />
         </div>
         
         <div>
-          <label htmlFor="endDate" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="endDate" className="block text-sm font-ginora font-medium text-gray-700 mb-1">
             To Date
           </label>
           <input
             type="date"
             id="endDate"
             name="endDate"
-            className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+            className="w-full p-2 border border-gray-300 rounded-lg font-ginora focus:ring-primary focus:border-primary"
             value={filters.endDate}
             onChange={handleFilterChange}
           />
@@ -111,7 +111,7 @@ const AuditLogViewer = () => {
         <div className="md:col-span-3 flex justify-end">
           <button
             type="submit"
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            className="px-4 py-2 bg-primary text-white rounded-lg font-ginora hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2"
           >
             Search Logs
           </button>
@@ -137,15 +137,15 @@ const AuditLogViewer = () => {
       {/* Loading state */}
       {loading && (
         <div className="flex justify-center items-center py-8">
-          <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
-          <span className="ml-3 text-gray-600">Loading audit logs...</span>
+          <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div>
+          <span className="ml-3 text-gray-600 font-ginora">Loading audit logs...</span>
         </div>
       )}
       
       {/* Results table */}
       {!loading && logs.length === 0 ? (
-        <div className="text-center py-8 border rounded-md">
-          <p className="text-gray-500">No audit logs found matching your criteria.</p>
+        <div className="text-center py-8 border rounded-lg">
+          <p className="text-gray-500 font-ginora">No audit logs found matching your criteria.</p>
         </div>
       ) : (
         <div className="overflow-x-auto">

@@ -36,11 +36,11 @@ export default function ResponsiveHelper({ enabled = false }) {
   // More accessible colors with better contrast
   let bgColor, textColor;
   switch (currentBreakpoint) {
-    case 'xs': bgColor = 'bg-red-700'; textColor = 'text-white'; break;
+    case 'xs': bgColor = 'bg-secondary'; textColor = 'text-white'; break;
     case 'sm': bgColor = 'bg-orange-700'; textColor = 'text-white'; break;
-    case 'md': bgColor = 'bg-yellow-700'; textColor = 'text-white'; break;
+    case 'md': bgColor = 'bg-tertiary'; textColor = 'text-black'; break;
     case 'lg': bgColor = 'bg-green-700'; textColor = 'text-white'; break;
-    case 'xl': bgColor = 'bg-blue-700'; textColor = 'text-white'; break;
+    case 'xl': bgColor = 'bg-primary'; textColor = 'text-white'; break;
     case '2xl': bgColor = 'bg-purple-700'; textColor = 'text-white'; break;
     default: bgColor = 'bg-gray-700'; textColor = 'text-white';
   }
@@ -52,7 +52,7 @@ export default function ResponsiveHelper({ enabled = false }) {
       aria-live="polite"
       aria-label={`Current viewport width is ${windowWidth}px at breakpoint ${currentBreakpoint}`}
     >
-      <div className={`${bgColor} ${textColor} text-xs px-2 py-1 rounded-tr focus-within:ring-2 focus-within:ring-white`}>
+      <div className={`${bgColor} ${textColor} text-xs px-2 py-1 rounded-tr focus-within:ring-2 focus-within:ring-white font-ginora`}>
         <div className="font-mono">
           <span className="font-bold">{currentBreakpoint}</span>
           <span className="ml-2">{windowWidth}px</span>

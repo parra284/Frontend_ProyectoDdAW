@@ -218,15 +218,14 @@ const InventoryDashboard = () => {
       
       <NotificationSystem />
       
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <header className="mb-6">          <div className="flex flex-col md:flex-row md:items-center md:justify-between">
-            <h1 className="text-2xl font-bold text-gray-900 mb-2 md:mb-0">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">        <header className="mb-6">          <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+            <h1 className="text-2xl font-bebas text-primary mb-2 md:mb-0">
               Inventory Dashboard
             </h1>
             <div className="flex items-center space-x-3">
               <a 
                 href="/audit-logs" 
-                className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                className="text-primary hover:text-secondary text-sm font-ginora"
               >
                 View Deletion History
               </a>
@@ -241,10 +240,9 @@ const InventoryDashboard = () => {
                 {networkStatus === 'online' ? 'Online' : 
                   networkStatus === 'offline' ? 'Offline' : 
                   'Server Error'}
-              </span>
-              <button 
+              </span>              <button 
                 onClick={() => fetchProducts()}
-                className="inline-flex items-center px-3 py-1.5 border border-gray-300 shadow-sm text-xs font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                className="inline-flex items-center px-3 py-1.5 border border-gray-300 shadow-sm text-xs font-medium font-ginora rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
                 disabled={loading}
                 aria-label="Refresh inventory data"
               >
@@ -349,14 +347,14 @@ const InventoryDashboard = () => {
           <div className="px-4 py-5 sm:p-6">
             <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
               <div className="sm:col-span-2">
-                <label htmlFor="search" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="search" className="block text-sm font-medium text-gray-700 font-ginora">
                   Search Products
                 </label>
                 <div className="mt-1 relative rounded-md shadow-sm">
                   <input
                     type="search"
                     id="search"
-                    className="focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                    className="focus:ring-primary focus:border-primary block w-full sm:text-sm border-gray-300 rounded-lg font-ginora"
                     placeholder="Search by name, SKU..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
@@ -365,12 +363,12 @@ const InventoryDashboard = () => {
               </div>
 
               <div className="sm:col-span-2">
-                <label htmlFor="category" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="category" className="block text-sm font-medium text-gray-700 font-ginora">
                   Category
                 </label>
                 <select
                   id="category"
-                  className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
+                  className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm rounded-lg font-ginora"
                   value={filters.category}
                   onChange={(e) => setFilters({...filters, category: e.target.value})}
                 >
@@ -384,12 +382,12 @@ const InventoryDashboard = () => {
               </div>
 
               <div className="sm:col-span-2">
-                <label htmlFor="stockStatus" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="stockStatus" className="block text-sm font-medium text-gray-700 font-ginora">
                   Stock Status
                 </label>
                 <select
                   id="stockStatus"
-                  className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
+                  className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm rounded-lg font-ginora"
                   value={filters.stockStatus}
                   onChange={(e) => setFilters({...filters, stockStatus: e.target.value})}
                 >
@@ -445,7 +443,7 @@ const InventoryDashboard = () => {
                       setSearchQuery('');
                       setFilters({ category: '', stockStatus: '' });
                     }}
-                    className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                    className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-ginora rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
                   >
                     Clear Filters
                   </button>
@@ -475,7 +473,7 @@ const InventoryDashboard = () => {
                   <button
                     type="button"
                     onClick={() => fetchProducts()}
-                    className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                    className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-ginora rounded-lg shadow-sm text-white bg-secondary hover:bg-secondary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-secondary/50"
                   >
                     Try Again
                   </button>

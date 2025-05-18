@@ -70,87 +70,87 @@ export default function NewProductForm({ onProductAdded }) {
 
   return (
     <form onSubmit={handleSubmit} className="p-4 sm:p-6 md:p-8 border rounded-lg bg-white shadow-md max-w-md sm:max-w-lg mx-auto">
-      <h2 className="text-lg sm:text-xl md:text-2xl font-bold mb-4 sm:mb-6 text-gray-800">Add New Product</h2>
+      <h2 className="text-lg sm:text-xl md:text-2xl font-bebas text-primary mb-4 sm:mb-6">Add New Product</h2>
       
       {Object.values(error).some((errMsg) => errMsg) && (
-        <div className="bg-red-50 border-l-4 border-red-500 p-3 mb-5 rounded">
-          <p className="text-red-700 text-sm sm:text-base">Please fix the errors below.</p>
+        <div className="bg-red-50 border-l-4 border-secondary p-3 mb-5 rounded">
+          <p className="text-red-700 text-sm sm:text-base font-ginora">Please fix the errors below.</p>
         </div>
       )}
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
         <div>
-          <label className="block mb-1 text-sm sm:text-base font-medium text-gray-700">Product Name</label>
+          <label className="block mb-1 text-sm sm:text-base font-medium text-gray-700 font-ginora">Product Name</label>
           <input
             type="text"
             name="name"
             value={formData.name}
             onChange={handleChange}
-            className="w-full p-2 sm:p-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-300 focus:border-blue-300"
+            className="w-full p-2 sm:p-2.5 border border-gray-300 rounded-lg font-ginora focus:ring-2 focus:ring-primary focus:border-primary"
           />
-          {error.name && <p className="text-red-500 text-xs sm:text-sm mt-1">{error.name}</p>}
+          {error.name && <p className="text-secondary text-xs sm:text-sm mt-1 font-ginora">{error.name}</p>}
         </div>
         
         <div>
-          <label className="block mb-1 text-sm sm:text-base font-medium text-gray-700">SKU</label>
+          <label className="block mb-1 text-sm sm:text-base font-medium text-gray-700 font-ginora">SKU</label>
           <input
             type="text"
             name="sku"
             value={formData.sku}
             onChange={handleChange}
-            className="w-full p-2 sm:p-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-300 focus:border-blue-300"
+            className="w-full p-2 sm:p-2.5 border border-gray-300 rounded-lg font-ginora focus:ring-2 focus:ring-primary focus:border-primary"
           />
-          {error.sku && <p className="text-red-500 text-xs sm:text-sm mt-1">{error.sku}</p>}
+          {error.sku && <p className="text-secondary text-xs sm:text-sm mt-1 font-ginora">{error.sku}</p>}
         </div>
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
         <div>
-          <label className="block mb-1 text-sm sm:text-base font-medium text-gray-700">Price</label>
+          <label className="block mb-1 text-sm sm:text-base font-medium text-gray-700 font-ginora">Price</label>
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <span className="text-gray-500 sm:text-sm">$</span>
+              <span className="text-gray-500 sm:text-sm font-ginora">$</span>
             </div>
             <input
               type="number"
               name="price"
               value={formData.price}
               onChange={handleChange}
-              className="w-full pl-7 p-2 sm:p-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-300 focus:border-blue-300"
+              className="w-full pl-7 p-2 sm:p-2.5 border border-gray-300 rounded-lg font-ginora focus:ring-2 focus:ring-primary focus:border-primary"
               step="0.01"
             />
           </div>
-          {error.price && <p className="text-red-500 text-xs sm:text-sm mt-1">{error.price}</p>}
+          {error.price && <p className="text-secondary text-xs sm:text-sm mt-1 font-ginora">{error.price}</p>}
         </div>
         
         <div>
-          <label className="block mb-1 text-sm sm:text-base font-medium text-gray-700">Stock</label>
+          <label className="block mb-1 text-sm sm:text-base font-medium text-gray-700 font-ginora">Stock</label>
           <input
             type="number"
             name="stock"
             value={formData.stock}
             onChange={handleChange}
-            className="w-full p-2 sm:p-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-300 focus:border-blue-300"
+            className="w-full p-2 sm:p-2.5 border border-gray-300 rounded-lg font-ginora focus:ring-2 focus:ring-primary focus:border-primary"
           />
-          {error.stock && <p className="text-red-500 text-xs sm:text-sm mt-1">{error.stock}</p>}
+          {error.stock && <p className="text-secondary text-xs sm:text-sm mt-1 font-ginora">{error.stock}</p>}
         </div>
       </div>
       
       <div className="mb-6">
-        <label className="block mb-1 text-sm sm:text-base font-medium text-gray-700">Category</label>
+        <label className="block mb-1 text-sm sm:text-base font-medium text-gray-700 font-ginora">Category</label>
         <input
           type="text"
           name="category"
           value={formData.category}
           onChange={handleChange}
-          className="w-full p-2 sm:p-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-300 focus:border-blue-300"
+          className="w-full p-2 sm:p-2.5 border border-gray-300 rounded-lg font-ginora focus:ring-2 focus:ring-primary focus:border-primary"
         />
-        {error.category && <p className="text-red-500 text-xs sm:text-sm mt-1">{error.category}</p>}
+        {error.category && <p className="text-secondary text-xs sm:text-sm mt-1 font-ginora">{error.category}</p>}
       </div>
       
       <button 
         type="submit" 
-        className="w-full sm:w-auto bg-blue-500 text-white px-4 py-2 sm:px-6 sm:py-3 rounded-md hover:bg-blue-700 transition duration-200 font-medium focus:outline-none focus:ring-2 focus:ring-blue-400"
+        className="w-full sm:w-auto bg-primary text-white px-4 py-2 sm:px-6 sm:py-3 rounded-lg font-ginora hover:bg-primary/90 transition duration-200 focus:outline-none focus:ring-2 focus:ring-primary/50"
       >
         Add Product
       </button>

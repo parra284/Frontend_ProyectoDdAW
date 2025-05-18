@@ -246,29 +246,25 @@ const StockAdjustmentModal = ({
                             Remove Inventory
                           </button>
                         </div>
-                      </div>
-
-                      <div className="mb-4">
-                        <label htmlFor="quantity" className="block text-sm font-medium text-gray-700 mb-1">
+                      </div>                      <div className="mb-4">
+                        <label htmlFor="quantity" className="block text-sm font-medium text-gray-700 mb-1 font-ginora">
                           Quantity
                         </label>
                         <input
                           type="number"
                           id="quantity"
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-primary focus:border-primary font-ginora"
                           value={quantity}
                           onChange={(e) => setQuantity(parseInt(e.target.value) || 0)}
                           min="1"
                         />
-                      </div>
-
-                      <div className="mb-4">
-                        <label htmlFor="reason" className="block text-sm font-medium text-gray-700 mb-1">
+                      </div>                      <div className="mb-4">
+                        <label htmlFor="reason" className="block text-sm font-medium text-gray-700 mb-1 font-ginora">
                           Reason
                         </label>
                         <select
                           id="reason"
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-primary focus:border-primary font-ginora"
                           value={reason}
                           onChange={(e) => setReason(e.target.value)}
                         >
@@ -280,17 +276,15 @@ const StockAdjustmentModal = ({
                           <option value="Correction">Inventory Correction</option>
                           <option value="Other">Other</option>
                         </select>
-                      </div>
-
-                      {reason === 'Other' && (
+                      </div>                      {reason === 'Other' && (
                         <div className="mb-4">
-                          <label htmlFor="customReason" className="block text-sm font-medium text-gray-700 mb-1">
+                          <label htmlFor="customReason" className="block text-sm font-medium text-gray-700 mb-1 font-ginora">
                             Specify Reason
                           </label>
                           <input
                             type="text"
                             id="customReason"
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-primary focus:border-primary font-ginora"
                             onChange={(e) => setReason(e.target.value)}
                             placeholder="Enter specific reason"
                           />
@@ -349,10 +343,9 @@ const StockAdjustmentModal = ({
                         <label className="block text-sm font-medium text-gray-700 mb-1">
                           Selection
                         </label>
-                        <button 
-                          type="button"
+                        <button                          type="button"
                           onClick={handleToggleAllProducts}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-50 text-sm font-medium text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm bg-gray-50 text-sm font-medium font-ginora text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
                         >
                           {allSelected ? 'Deselect All' : 'Select All Products'}
                         </button>
@@ -375,17 +368,16 @@ const StockAdjustmentModal = ({
                                   checked={selectedProducts.length > 0 && selectedProducts.length === filteredProducts.length}
                                   onChange={handleToggleAllProducts}
                                 />
-                              </th>
-                              <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                              </th>                              <th scope="col" className="px-3 py-2 text-left text-xs font-bebas text-primary uppercase tracking-wider">
                                 Product
                               </th>
-                              <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                              <th scope="col" className="px-3 py-2 text-left text-xs font-bebas text-primary uppercase tracking-wider">
                                 SKU
                               </th>
-                              <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                              <th scope="col" className="px-3 py-2 text-left text-xs font-bebas text-primary uppercase tracking-wider">
                                 Category
                               </th>
-                              <th scope="col" className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                              <th scope="col" className="px-3 py-2 text-left text-xs font-bebas text-primary uppercase tracking-wider">
                                 Current Stock
                               </th>
                             </tr>
@@ -518,14 +510,13 @@ const StockAdjustmentModal = ({
               </div>
             </div>
           </div>
-          <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-            <button
+          <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">            <button
               type="button"
               onClick={handleSubmit}
               disabled={loading || (isBatch && selectedProducts.length === 0)}
-              className={`w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 ${
-                adjustmentType === 'add' ? 'bg-blue-600 hover:bg-blue-700' : 'bg-yellow-600 hover:bg-yellow-700'
-              } text-base font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm ${
+              className={`w-full inline-flex justify-center rounded-lg border border-transparent shadow-sm px-4 py-2 ${
+                adjustmentType === 'add' ? 'bg-primary hover:bg-primary/90' : 'bg-secondary hover:bg-secondary/90'
+              } text-base font-ginora text-white focus:outline-none focus:ring-2 focus:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm ${
                 loading || (isBatch && selectedProducts.length === 0) ? 'opacity-50 cursor-not-allowed' : ''
               }`}
             >
@@ -535,7 +526,7 @@ const StockAdjustmentModal = ({
               type="button"
               onClick={onClose}
               disabled={loading}
-              className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+              className="mt-3 w-full inline-flex justify-center rounded-lg border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-ginora text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
             >
               Cancel
             </button>

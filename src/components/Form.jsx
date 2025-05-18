@@ -47,7 +47,7 @@ export default function Form({ type, onSubmit, fields }) {
       onSubmit={handleFormSubmit}
       aria-labelledby="form-title"
     >
-      <h2 id="form-title" className="text-dark-blue text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 text-center">{type}</h2>
+      <h2 id="form-title" className="text-primary text-2xl sm:text-3xl font-bebas mb-4 sm:mb-6 text-center">{type}</h2>
       <div className="w-full space-y-4">
         {fields.map(field => (
           <Input

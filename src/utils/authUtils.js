@@ -1,5 +1,5 @@
 // Utils for managing auth tokens
-const refreshTokenIfNeeded = async () => {
+const refreshTokenIfNeeded = async (forceRefresh = false) => {
   try {
     const token = localStorage.getItem('accessToken');
     if (!token) {
@@ -11,9 +11,9 @@ const refreshTokenIfNeeded = async () => {
     const tokenData = parseJwt(token);
     const currentTime = Date.now() / 1000;
     
-    // If token is expired or about to expire in the next 5 minutes
-    if (tokenData.exp && tokenData.exp < currentTime + 300) {
-      console.log('Token expired or about to expire, refreshing...');
+    // If token is expired, about to expire in the next 5 minutes, or if a refresh is forced
+    if (forceRefresh || !tokenData.exp || tokenData.exp < currentTime + 300) {
+      console.log('Token expired or refresh requested, attempting refresh...');
       return await refreshToken();
     }
     

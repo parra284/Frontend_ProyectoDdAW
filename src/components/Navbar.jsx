@@ -1,13 +1,18 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 
-export default function Navbar( { buttons }) {
+export default function Navbar({ buttons, userRole }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
   const toggleModal = () => {
     setIsModalOpen(!isModalOpen);
+  };
+
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
   const handleLogout = () => {
@@ -20,25 +25,38 @@ export default function Navbar( { buttons }) {
     navigate(button.path)
   };
 
-  return (
-    <div className="bg-dark-blue h-15 flex items-center justify-between px-4" role="navigation" aria-label="Main Navigation">
-      {buttons && buttons.length > 0 && (
-        <div>
-          {buttons.map((button, index) => (
+  const filteredButtons = buttons.filter((button) => {
+    if (userRole === 'POS') return button.roles.includes('POS');
+    if (userRole === 'user') return button.roles.includes('user');
+    return false;
+  });
+
+  return (    <nav className="bg-primary h-15 flex items-center justify-between px-4" role="navigation" aria-label="Main Navigation">
+      <div className="flex items-center">
+        <button
+          className="text-white font-bebas hover:text-tertiary m-5 lg:hidden"
+          onClick={toggleMobileMenu}
+          aria-expanded={isMobileMenuOpen}
+          aria-label="Toggle navigation menu"
+        >
+          ☰
+        </button>
+        <div className={`lg:flex ${isMobileMenuOpen ? 'block' : 'hidden'} lg:block`}>
+          {filteredButtons.map((button, index) => (
             <button
               key={index}
-              className={`text-white font-semibold hover:text-gray-200 m-5 hover:cursor-pointer ${
+              className={`text-white font-bebas text-lg hover:text-tertiary m-5 hover:cursor-pointer ${
                 location.pathname === button.path ? "underline" : ""
-              }`} // Add underline if selected
+              }`}
               onClick={() => handleButtonClick(button)}
             >
               {button.label}
             </button>
           ))}
         </div>
-      )}
+      </div>
       <button
-        className="text-white font-semibold hover:text-gray-200 hover:cursor-pointer m-5"
+        className="text-white font-bebas hover:text-tertiary hover:cursor-pointer m-5"
         onClick={toggleModal}
         aria-expanded={isModalOpen}
         aria-controls="profile-modal"
@@ -68,6 +86,6 @@ export default function Navbar( { buttons }) {
           </button>
         </div>
       )}
-    </div>
+    </nav>
   );
 }

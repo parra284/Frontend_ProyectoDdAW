@@ -39,32 +39,30 @@ const NotificationSystem = ({ position = 'bottom-right' }) => {
   const dismissNotification = (id) => {
     setNotifications(prev => prev.filter(notification => notification.id !== id));
   };
-  
-  // Get type-specific styles
+    // Get type-specific styles
   const getTypeStyles = (type) => {
     switch (type) {
       case 'success':
         return 'bg-green-600';
       case 'error':
-        return 'bg-red-600';
+        return 'bg-secondary'; // Using our secondary color (red) for errors
       case 'warning':
-        return 'bg-yellow-600';
+        return 'bg-tertiary'; // Using our tertiary color (amber) for warnings
       case 'info':
-        return 'bg-blue-600';
+        return 'bg-primary'; // Using our primary color (blue) for info
       default:
         return 'bg-gray-800';
     }
   };
-  
-  return (
+    return (
     <div className={`fixed z-50 flex flex-col gap-2 ${positionClasses[position]}`}>
       {notifications.map((notification) => (
         <div
           key={notification.id}
-          className={`${getTypeStyles(notification.type)} text-white px-4 py-2 rounded shadow-lg max-w-sm animate-fade-in flex items-center justify-between`}
+          className={`${getTypeStyles(notification.type)} text-white px-4 py-2 rounded-lg shadow-lg max-w-sm animate-fade-in flex items-center justify-between`}
           role="alert"
         >
-          <span>{notification.message}</span>
+          <span className="font-ginora">{notification.message}</span>
           <button 
             onClick={() => dismissNotification(notification.id)}
             className="ml-3 text-white"

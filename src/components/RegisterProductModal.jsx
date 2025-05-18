@@ -32,42 +32,38 @@ export default function RegisterProductModal({ isOpen, onCancel, onConfirm }) {
 
   if (!isOpen) return null;
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+  return (    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
       <div className="bg-white rounded-lg shadow-lg w-full max-w-md p-6">
-        <h2 className="text-lg font-bold mb-4">Register New Product</h2>
+        <h2 className="text-lg font-bebas text-primary mb-4">Register New Product</h2>
         <form onSubmit={handleSubmit} className="space-y-3">
           <input
             name="name"
             placeholder="Product Name"
-            className="w-full p-2 border rounded"
+            className="w-full p-2 border rounded-lg font-ginora focus:ring-2 focus:ring-primary focus:border-primary"
             value={form.name}
             onChange={handleChange}
             required
-          />
-          <input
+          />          <input
             name="price"
             type="number"
             placeholder="Price"
-            className="w-full p-2 border rounded"
+            className="w-full p-2 border rounded-lg font-ginora focus:ring-2 focus:ring-primary focus:border-primary"
             value={form.price}
             onChange={handleChange}
             required
             min="0"
-          />
-          <input
+          />          <input
             name="stock"
             type="number"
             placeholder="Stock"
-            className="w-full p-2 border rounded"
+            className="w-full p-2 border rounded-lg font-ginora focus:ring-2 focus:ring-primary focus:border-primary"
             value={form.stock}
             onChange={handleChange}
             required
             min="0"
-          />
-          <select
+          />          <select
             name="category"
-            className="w-full p-2 border rounded"
+            className="w-full p-2 border rounded-lg font-ginora focus:ring-2 focus:ring-primary focus:border-primary"
             value={form.category}
             onChange={handleChange}
             required
@@ -76,10 +72,9 @@ export default function RegisterProductModal({ isOpen, onCancel, onConfirm }) {
             <option value="electronics">Electronics</option>
             <option value="clothing">Clothing</option>
             <option value="home">Home</option>
-          </select>
-          <select
+          </select>          <select
             name="location"
-            className="w-full p-2 border rounded"
+            className="w-full p-2 border rounded-lg font-ginora focus:ring-2 focus:ring-primary focus:border-primary"
             value={form.location}
             onChange={handleChange}
             required
@@ -87,10 +82,9 @@ export default function RegisterProductModal({ isOpen, onCancel, onConfirm }) {
             <option value="">Select Location</option>
             <option value="Punto Verde">Punto Verde</option>
             <option value="Living Lab">Living Lab</option>
-          </select>
-          <div className="flex justify-end space-x-2 mt-4">
-            <button type="button" onClick={onCancel} className="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300">Cancel</button>
-            <button type="submit" className="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700">Register</button>
+          </select>          <div className="flex justify-end space-x-2 mt-4">
+            <button type="button" onClick={onCancel} className="px-4 py-2 rounded-lg font-ginora bg-gray-200 hover:bg-gray-300">Cancel</button>
+            <button type="submit" className="px-4 py-2 rounded-lg font-ginora bg-primary text-white hover:bg-primary/90">Register</button>
           </div>
         </form>
       </div>
