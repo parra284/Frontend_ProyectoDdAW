@@ -1,3 +1,5 @@
+import ProductsFilters from "../products/ProductsFilters";
+
 export default function Sidebar({
   searchQuery,
   handleSearch,

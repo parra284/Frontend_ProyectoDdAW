@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
 import ProductCard from "../components/ProductCard";
-import {
-  fetchProducts as fetchProductsApi
-} from "./productsService";
+import Button from "../components/Button"
+import { fetchProducts as fetchProductsApi } from "./productsService";
 
 export default function ProductsSection({ filters, searchQuery, extraButtons, cardButtons }) {
   const itemsPerPage = 5;
@@ -19,7 +18,13 @@ export default function ProductsSection({ filters, searchQuery, extraButtons, ca
     const fetchProducts = async () => {
       try {
         setLoading(true);
+        console.log(filters);
+        console.log(searchQuery);
+        
+        
         const products = await fetchProductsApi(filters, searchQuery);
+        console.log(products);
+        
         setProducts(products);
         setError(null);
         setCurrentPage(1);
@@ -89,6 +94,7 @@ export default function ProductsSection({ filters, searchQuery, extraButtons, ca
 
   // Filtering (if needed, but API already filters)
   const filteredProducts = products;
+  
 
   // Pagination
   const paginatedProducts = filteredProducts.slice(
@@ -177,7 +183,7 @@ export default function ProductsSection({ filters, searchQuery, extraButtons, ca
           <p className="text-gray-500">No products found matching your criteria.</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6 m-4">
           {paginatedProducts.map((product) => (
             <ProductCard
               key={product.id}

@@ -1,17 +1,13 @@
 import { useState } from 'react';
-import Navbar from '../components/Navbar';
 import { useNavigate } from 'react-router-dom';
+import Navbar from '../components/Navbar';
 import DeleteConfirmationModal from '../components/DeleteConfirmationModal';
 import RegisterProductModal from '../components/RegisterProductModal';
 import { logProductDeletion } from '../utils/auditLogger';
 import { showNotification } from '../components/NotificationSystem';
 import Sidebar from '../components/Sidebar';
 import ProductsSection from './ProductsSection';
-import {
-  deleteProduct as deleteProductApi,
-  updateProduct as updateProductApi,
-  registerProduct as registerProductApi
-} from './productsService';
+import { deleteProduct as deleteProductApi, updateProduct as updateProductApi, registerProduct as registerProductApi } from './productsService';
 
 export default function ProductsPOS() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -38,6 +34,8 @@ export default function ProductsPOS() {
   ];
 
   const handleSearch = (e) => {
+    console.log(e);
+    
     setSearchQuery(e.target.value);
   };
 
@@ -46,7 +44,6 @@ export default function ProductsPOS() {
     setFilters((prevFilters) => ({ ...prevFilters, [name]: value }));
   };
 
-  const openRegisterModal = () => setRegisterModalOpen(true);
   const closeRegisterModal = () => setRegisterModalOpen(false);
 
   const initiateProductDelete = (product) => {
@@ -68,7 +65,6 @@ export default function ProductsPOS() {
     setDeleteModalOpen(false);
 
     try {
-      // Call the API to delete the product using the service
       await deleteProductApi(id);
 
       // Get user from localStorage
@@ -210,7 +206,7 @@ export default function ProductsPOS() {
             handleSearch={handleSearch}
             filters={filters}
             handleFilterChange={handleFilterChange}
-            clearFilters={() => setFilters({ category: '', availability: '', priceRange: '', location: '' })}
+            clearFilters={clearFilters}
           />
 
           {/* Main Content */}
