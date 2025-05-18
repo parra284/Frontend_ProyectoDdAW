@@ -7,6 +7,7 @@ import ProtectedRoute from "./auth/ProtectedRoute";
 import NotificationSystem from "./components/NotificationSystem";
 import ProductsPOS from "./products/ProductsPOS";
 import ProductsUser from "./products/ProductsUser"
+import Orders from "./orders/Orders"
 
 const routes = [
   { path: '/', element: <Navigate to="/login" replace /> },
@@ -17,7 +18,8 @@ const routes = [
     element: <ProtectedRoute elements={[<ProductsPOS />, <ProductsUser />]} roles={['POS','user']}/> 
   },
   { path: '/forbidden', element: <ForbiddenAccess /> },
-  { path: '/audit-logs', element: <ProtectedRoute elements={<AuditLogPage />} roles={['POS', 'admin']}/> }
+  { path: '/audit-logs', element: <ProtectedRoute elements={<AuditLogPage />} roles={['POS', 'admin']}/> },
+  { path: '/orders', element: <ProtectedRoute elements={<Orders />} roles={['POS', 'admin']}/> }
 ]
 
 const router = createBrowserRouter(routes);
