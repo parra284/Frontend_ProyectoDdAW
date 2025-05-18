@@ -3,7 +3,7 @@ import ProductCard from "../components/ProductCard";
 import Button from "../components/Button"
 import { fetchProducts as fetchProductsApi } from "./productsService";
 
-export default function ProductsSection({ filters, searchQuery, extraButtons, cardButtons }) {
+export default function ProductsSection({ filters, searchQuery, extraButtons = [], cardButtons, onProductsLoaded }) {
   const itemsPerPage = 5;
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -18,11 +18,12 @@ export default function ProductsSection({ filters, searchQuery, extraButtons, ca
         console.log(filters);
         console.log(searchQuery);
         
-        
         const products = await fetchProductsApi(filters, searchQuery);
-        console.log(products);
         
         setProducts(products);
+        if (onProductsLoaded) {
+          onProductsLoaded(products);
+        }
         setError(null);
         setCurrentPage(1);
       } catch (err) {
@@ -34,16 +35,14 @@ export default function ProductsSection({ filters, searchQuery, extraButtons, ca
     fetchProducts();
   }, [filters, searchQuery]);
 
-  // Filtering (if needed, but API already filters)
-  const filteredProducts = products;
-  
+  console.log(products);
 
   // Pagination
-  const paginatedProducts = filteredProducts.slice(
+  const paginatedProducts = products.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
-  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+  const totalPages = Math.ceil(products.length / itemsPerPage);
 
   if (loading) {
     return (
@@ -77,10 +76,10 @@ export default function ProductsSection({ filters, searchQuery, extraButtons, ca
     <div className="lg:w-3/4 p-4 sm:p-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
         <h1 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-0">
-          Products ({filteredProducts.length})
+          Products ({products.length})
         </h1>
       </div>
-      {filteredProducts.length === 0 ? (
+      {products.length === 0 ? (
         <div className="bg-gray-50 p-6 text-center rounded-md border border-gray-200">
           <p className="text-gray-500">No products found matching your criteria.</p>
         </div>
@@ -90,7 +89,6 @@ export default function ProductsSection({ filters, searchQuery, extraButtons, ca
             <ProductCard
               key={product.id}
               product={product}
-              setProducts={setProducts}
               cardButtons={cardButtons} // <-- pass down
             />
           ))}

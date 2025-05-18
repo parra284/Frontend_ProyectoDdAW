@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
-export default function RegisterProductModal({ isOpen, onCancel, onConfirm }) {
+export default function RegisterProductModal({ isOpen, onCancel, onConfirm, selectedProduct }) {
   const [form, setForm] = useState({
     name: '',
     price: '',
@@ -9,6 +9,26 @@ export default function RegisterProductModal({ isOpen, onCancel, onConfirm }) {
     location: '',
   });
 
+  useEffect(() => {
+    if (selectedProduct) {
+      setForm({
+        name: selectedProduct.name || '',
+        price: selectedProduct.price?.toString() || '',
+        stock: selectedProduct.stock?.toString() || '',
+        category: selectedProduct.category || '',
+        location: selectedProduct.location || '',
+      });
+    } else {
+      setForm({
+        name: '',
+        price: '',
+        stock: '',
+        category: '',
+        location: '',
+      });
+    }
+  }, [selectedProduct]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
@@ -16,18 +36,12 @@ export default function RegisterProductModal({ isOpen, onCancel, onConfirm }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onConfirm({
+    const productData = {
       ...form,
       price: parseFloat(form.price),
       stock: parseInt(form.stock, 10),
-    });
-    setForm({
-      name: '',
-      price: '',
-      stock: '',
-      category: '',
-      location: '',
-    });
+    };
+    onConfirm(productData, selectedProduct?.id); // pass ID if updating
   };
 
   if (!isOpen) return null;
@@ -35,7 +49,9 @@ export default function RegisterProductModal({ isOpen, onCancel, onConfirm }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
       <div className="bg-white rounded-lg shadow-lg w-full max-w-md p-6">
-        <h2 className="text-lg font-bold mb-4">Register New Product</h2>
+        <h2 className="text-lg font-bold mb-4">
+          {selectedProduct ? 'Update Product' : 'Register New Product'}
+        </h2>
         <form onSubmit={handleSubmit} className="space-y-3">
           <input
             name="name"
@@ -89,8 +105,12 @@ export default function RegisterProductModal({ isOpen, onCancel, onConfirm }) {
             <option value="Living Lab">Living Lab</option>
           </select>
           <div className="flex justify-end space-x-2 mt-4">
-            <button type="button" onClick={onCancel} className="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300">Cancel</button>
-            <button type="submit" className="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700">Register</button>
+            <button type="button" onClick={onCancel} className="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300">
+              Cancel
+            </button>
+            <button type="submit" className="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700">
+              {selectedProduct ? 'Update' : 'Register'}
+            </button>
           </div>
         </form>
       </div>

@@ -2,12 +2,9 @@ import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom"
 import SignUp from './auth/SignUp';
 import LogIn from './auth/LogIn';
 import ForbiddenAccess from './auth/ForbiddenAccess';
-import InventoryReports from './products/InventoryReports';
 import AuditLogPage from './products/AuditLogPage';
 import ProtectedRoute from "./auth/ProtectedRoute";
-import ResponsiveDemo from "./components/ResponsiveDemo";
 import NotificationSystem from "./components/NotificationSystem";
-import InventoryDashboard from "./products/InventoryDashboard";
 import ProductsPOS from "./products/ProductsPOS";
 import ProductsUser from "./products/ProductsUser"
 
@@ -20,9 +17,6 @@ const routes = [
     element: <ProtectedRoute elements={[<ProductsPOS />, <ProductsUser />]} roles={['POS','user']}/> 
   },
   { path: '/forbidden', element: <ForbiddenAccess /> },
-  { path: '/responsive-demo', element: <ResponsiveDemo /> },
-  { path: '/inventory', element: <ProtectedRoute elements={<InventoryDashboard />} roles={['POS']}/> },
-  { path: '/inventory/reports', element: <ProtectedRoute elements={<InventoryReports />} roles={['POS', 'admin']}/> },
   { path: '/audit-logs', element: <ProtectedRoute elements={<AuditLogPage />} roles={['POS', 'admin']}/> }
 ]
 
