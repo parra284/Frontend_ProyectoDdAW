@@ -3,13 +3,13 @@ import SelectFilter from "../components/SelectFilter"
 export default function ProductsFilters({ searchQuery, handleSearch, filters, handleFilterChange, clearFilters }) {
   return (
     <>
-      <h2 className="text-lg font-bold mb-4">Filters</h2>
+      <h2 className="text-lg font-bold mb-4 text-primary font-bebas">Filters</h2>
       <div className="mb-4">
         <label className="block text-sm mb-1 font-medium">Search</label>
         <input
           value={searchQuery}
           onChange={handleSearch}
-          className="w-full p-2 rounded text-gray-800 focus:ring-2 focus:ring-blue-300 focus:outline-none"
+          className="w-full p-2 rounded text-gray-800 focus:ring-2 focus:ring-primary focus:outline-none"
           placeholder="Search..."
         />
       </div>
@@ -55,7 +55,7 @@ export default function ProductsFilters({ searchQuery, handleSearch, filters, ha
         </div>
       </div>
       <button
-        className="w-full bg-white text-blue-600 py-2 rounded font-medium hover:bg-gray-100 transition-colors mt-2 focus:outline-none focus:ring-2 focus:ring-white"
+        className="w-full bg-white text-primary py-2 rounded font-medium hover:bg-gray-100 transition-colors mt-2 focus:outline-none focus:ring-2 focus:ring-primary"
         onClick={clearFilters}
       >
         Clear Filters

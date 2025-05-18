@@ -7,6 +7,8 @@ import Navbar from '../components/Navbar';
 import axios from 'axios';
 import ResponsiveContainer from '../components/ResponsiveContainer';
 import ResponsiveHelper from '../components/ResponsiveHelper';
+import MobilePanel from '../components/MobilePanel';
+import ShoppingCart from './ShoppingCart';
 
 const ProductsUser = () => {
   const [products, setProducts] = useState([]);
@@ -16,6 +18,7 @@ const ProductsUser = () => {
   const [showCart, setShowCart] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showFilters, setShowFilters] = useState(false);
 
   const user = JSON.parse(localStorage.getItem('user')) || {}; // Retrieve user info
   const userRole = user.role || 'guest'; // Default to 'guest' if no role is found;
@@ -128,7 +131,7 @@ const ProductsUser = () => {
             </button>
             <button
               className="bg-blue-600 text-white px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg hover:bg-blue-700 transition duration-200 text-sm sm:text-base font-medium focus:outline-none focus:ring-2 focus:ring-blue-500"
-              onClick={() => setShowFilters(!showFilters)}
+              onClick={() => setShowFilters((prev) => !prev)}
             >
               {showFilters ? 'Hide Filters' : 'Show Filters'}
             </button>
@@ -197,10 +200,12 @@ const ProductsUser = () => {
             <div key={product.id} className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition duration-200">
               <div className="relative">
                 <img
-                  src={product.image}
-                  alt={product.name}
+                  src={product.image || 'fallback-image-url.jpg'}
+                  alt={product.name || 'Product image'}
                   className="w-full h-40 sm:h-48 object-cover"
-                  onError={(e) => { e.target.onerror = null; e.target.src = 'https://via.placeholder.com/300x200?text=No+Image'; }}
+                  onError={(e) => {
+                    e.target.src = 'fallback-image-url.jpg';
+                  }}
                 />
                 {product.stock <= 0 && (
                   <div className="absolute top-0 right-0 bg-red-500 text-white text-xs font-bold px-2 py-1 m-2 rounded">

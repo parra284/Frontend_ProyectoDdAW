@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 import ProductCard from "../components/ProductCard";
 import Button from "../components/Button"
-import { fetchProducts as fetchProductsApi } from "./productsService";
+import { fetchProducts as fetchProductsService, registerProduct, deleteProduct } from './productsService';
 
 export default function ProductsSection({ filters, searchQuery, extraButtons, cardButtons }) {
   const itemsPerPage = 5;
@@ -22,7 +22,7 @@ export default function ProductsSection({ filters, searchQuery, extraButtons, ca
         console.log(searchQuery);
         
         
-        const products = await fetchProductsApi(filters, searchQuery);
+        const products = await fetchProductsService(filters, searchQuery);
         console.log(products);
         
         setProducts(products);
@@ -36,6 +36,32 @@ export default function ProductsSection({ filters, searchQuery, extraButtons, ca
     };
     fetchProducts();
   }, [filters, searchQuery]);
+
+  const handleRegisterProduct = async (newProduct) => {
+    try {
+      await registerProduct(newProduct);
+      alert('Product registered successfully!');
+      // Actualizar la lista de productos
+      const updatedProducts = await fetchProductsService(filters, searchQuery);
+      setProducts(updatedProducts);
+    } catch (error) {
+      console.error('Error registering product:', error);
+      alert('Failed to register product.');
+    }
+  };
+
+  const handleDeleteProduct = async (productId) => {
+    try {
+      await deleteProduct(productId);
+      alert('Product deleted successfully!');
+      // Actualizar la lista de productos
+      const updatedProducts = await fetchProductsService(filters, searchQuery);
+      setProducts(updatedProducts);
+    } catch (error) {
+      console.error('Error deleting product:', error);
+      alert('Failed to delete product.');
+    }
+  };
 
   // Function to handle adding products to the cart
   const handleAddToCart = (product) => {

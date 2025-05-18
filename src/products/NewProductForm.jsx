@@ -64,7 +64,7 @@ export default function NewProductForm({ onProductAdded }) {
       const result = await registerProduct(productData);
 
       if (result && result.product) {
-        onProductAdded(result.product); // Notify parent component
+        onProductAdded(result.product); // Notify parent component to refresh the product list
         setFormData({ name: '', price: '', stock: '', category: '', location: '' });
         showNotification('Product added successfully!', 'success');
       } else {

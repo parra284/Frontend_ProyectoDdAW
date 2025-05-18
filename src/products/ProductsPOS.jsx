@@ -66,7 +66,7 @@ export default function ProductsPOS() {
     try {
       await deleteProductApi(id);
       showNotification(`${productName} deleted successfully.`, 'success');
-      if (refetchProducts) refetchProducts();
+      if (refetchProducts) refetchProducts(); // Refresh the product list
     } catch (error) {
       console.error('Error deleting product:', error);
       showNotification(`Failed to delete ${productName}: ${error.message}`, 'error');

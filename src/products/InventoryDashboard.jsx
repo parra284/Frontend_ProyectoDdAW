@@ -189,11 +189,7 @@ const InventoryDashboard = () => {
   const handleDeleteProduct = async (productId) => {
     try {
       await deleteProduct(productId);
-      setProducts(products.filter(product => product.id !== productId));
-      
-      // If you have a log function, uncomment this
-      // logProductDeletion(productId);
-      
+      await refreshProducts();
       showNotification('Product deleted successfully', 'success');
     } catch (err) {
       console.error('Error deleting product:', err);
@@ -201,6 +197,15 @@ const InventoryDashboard = () => {
     } finally {
       setDeleteModalOpen(false);
       setProductToDelete(null);
+    }
+  };
+
+  const refreshProducts = async () => {
+    try {
+      const updatedProducts = await fetchProducts(filters, searchQuery);
+      setProducts(updatedProducts);
+    } catch (err) {
+      console.error('Error refreshing products:', err);
     }
   };
 
@@ -629,9 +634,7 @@ const InventoryDashboard = () => {
             if (productToDelete && productToDelete.id) {
               deleteProduct(productToDelete.id)
                 .then(() => {
-                  setProducts(prevProducts => 
-                    prevProducts.filter(product => product.id !== productToDelete.id)
-                  );
+                  fetchProducts(); // Refresh the product list
                   showNotification('Product deleted successfully', 'success');
                 })
                 .catch(error => {

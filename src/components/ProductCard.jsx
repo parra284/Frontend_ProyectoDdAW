@@ -2,7 +2,8 @@ export default function ProductCard({
   product,
   setProducts,
   cardButtons
-}) {  return (
+}) {
+  return (
     <div className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition duration-200">
       <div className="relative">
         <img 
@@ -17,6 +18,7 @@ export default function ProductCard({
       </div>
       <div className="p-4">
         <h2 className="text-lg font-bebas mb-2 line-clamp-1">{product.name}</h2>
+        <p className="text-sm text-gray-600 mb-2 line-clamp-2">{product.description}</p>
         <div className="grid grid-cols-2 gap-2 mb-3">
           <div className="text-sm font-ginora">
             <span className="block text-gray-500">Price</span>
@@ -28,6 +30,10 @@ export default function ProductCard({
               {product.stock > 0 ? product.stock : 'Out of stock'}
             </span>
           </div>
+        </div>
+        <div className="text-sm font-ginora mb-3">
+          <span className="block text-gray-500">Location</span>
+          <span className="font-medium text-gray-700">{product.location}</span>
         </div>
         <div className="mt-3 border-t pt-3">
           <div className="space-y-3">
@@ -45,7 +51,8 @@ export default function ProductCard({
                   )
                 }
               />
-            </div>            <div>
+            </div>
+            <div>
               <label className="block text-xs font-medium text-gray-700 mb-1 font-ginora">Update Stock</label>
               <input
                 type="number"
@@ -61,7 +68,8 @@ export default function ProductCard({
               />
             </div>
           </div>
-        </div>        <div className="mt-3 flex flex-col sm:flex-row sm:space-x-2 space-y-2 sm:space-y-0">
+        </div>
+        <div className="mt-3 flex flex-col sm:flex-row sm:space-x-2 space-y-2 sm:space-y-0">
           {cardButtons && cardButtons.map((btn, idx) => (
             <button
               key={idx}
