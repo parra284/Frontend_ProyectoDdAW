@@ -1,4 +1,8 @@
 import { useState } from "react";
+import { registerProduct } from "./productsService";
+import { showNotification } from "../components/NotificationSystem";
+
+const user = JSON.parse(localStorage.getItem('user')) || {}; // Obtener el usuario actual
 
 export default function NewProductForm({ onProductAdded }) {
   const [formData, setFormData] = useState({
@@ -44,27 +48,31 @@ export default function NewProductForm({ onProductAdded }) {
     }
 
     try {
-      const response = await fetch("http://localhost:3000/api/products", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: formData.name,
-          sku: formData.sku,
-          price: parseFloat(formData.price),
-          stock: parseInt(formData.stock, 10),
-          category: formData.category,
-        }),
-      });
+      const productData = {
+        name: formData.name,
+        price: parseFloat(formData.price),
+        stock: parseInt(formData.stock, 10),
+        category: formData.category,
+        location: formData.location,
+        posId: user.id, // Aseguramos que se envíe el posId del usuario actual
+        description: formData.description || '',
+        image: formData.image || '',
+        sku: formData.sku || '',
+        lowStockThreshold: formData.lowStockThreshold || 10,
+      };
 
-      if (!response.ok) throw new Error("Failed to add product.");
+      const result = await registerProduct(productData);
 
-      const newProduct = await response.json();
-      onProductAdded(newProduct); // Notify parent component
-      setFormData({ name: "", sku: "", price: "", stock: "", category: "" });
-      alert("Product added successfully!");
+      if (result && result.product) {
+        onProductAdded(result.product); // Notify parent component
+        setFormData({ name: '', price: '', stock: '', category: '', location: '' });
+        showNotification('Product added successfully!', 'success');
+      } else {
+        throw new Error('Failed to add product - unexpected response format');
+      }
     } catch (err) {
-      console.error("Error adding product:", err);
-      alert("Failed to add product. Please try again.");
+      console.error('Error adding product:', err);
+      showNotification(`Failed to add product: ${err.message || 'Unknown error'}`, 'error');
     }
   };
 

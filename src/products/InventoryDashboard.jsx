@@ -6,6 +6,7 @@ import Navbar from '../components/Navbar';
 import DeleteConfirmationModal from '../components/DeleteConfirmationModal';
 import StockAdjustmentModal from '../components/StockAdjustmentModal';
 import NotificationSystem, { showNotification } from '../components/NotificationSystem';
+import { deleteProduct } from './productsService';
 
 const InventoryDashboard = () => {
   const [products, setProducts] = useState([]);
@@ -184,13 +185,15 @@ const InventoryDashboard = () => {
       second: '2-digit'
     }).format(date);
   };
-
   // Function to handle product deletion
   const handleDeleteProduct = async (productId) => {
     try {
-      await axios.delete(`http://localhost:3000/api/products/${productId}`);
+      await deleteProduct(productId);
       setProducts(products.filter(product => product.id !== productId));
-      logProductDeletion(productId);
+      
+      // If you have a log function, uncomment this
+      // logProductDeletion(productId);
+      
       showNotification('Product deleted successfully', 'success');
     } catch (err) {
       console.error('Error deleting product:', err);
@@ -618,13 +621,29 @@ const InventoryDashboard = () => {
             )}
           </>
         )}
-      </div>
-
-      {deleteModalOpen && productToDelete && (
+      </div>      {deleteModalOpen && productToDelete && (
         <DeleteConfirmationModal
           isOpen={deleteModalOpen}
           onClose={() => setDeleteModalOpen(false)}
-          onConfirm={() => handleDeleteProduct(productToDelete.id)}
+          onConfirm={() => {
+            if (productToDelete && productToDelete.id) {
+              deleteProduct(productToDelete.id)
+                .then(() => {
+                  setProducts(prevProducts => 
+                    prevProducts.filter(product => product.id !== productToDelete.id)
+                  );
+                  showNotification('Product deleted successfully', 'success');
+                })
+                .catch(error => {
+                  console.error('Error deleting product:', error);
+                  showNotification(`Failed to delete product: ${error.message || 'Unknown error'}`, 'error');
+                })
+                .finally(() => {
+                  setDeleteModalOpen(false);
+                  setProductToDelete(null);
+                });
+            }
+          }}
           product={productToDelete}
         />
       )}

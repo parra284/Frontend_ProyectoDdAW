@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import DeleteConfirmationModal from '../components/DeleteConfirmationModal';
 import RegisterProductModal from '../components/RegisterProductModal';
-import { logProductDeletion } from '../utils/auditLogger';
 import { showNotification } from '../components/NotificationSystem';
 import Sidebar from '../components/Sidebar';
 import ProductsSection from './ProductsSection';
@@ -66,27 +65,16 @@ export default function ProductsPOS() {
 
     try {
       await deleteProductApi(id);
-
-      // Get user from localStorage
-      const user = JSON.parse(localStorage.getItem('user'));
-      const userId = user?.id || '1';
-
-      // Log the deletion to the audit system
-      await logProductDeletion(userId, productToDelete, reason);
-
-      showNotification(`Product "${productName}" removed successfully!`, 'success');
+      showNotification(`${productName} deleted successfully.`, 'success');
+      if (refetchProducts) refetchProducts();
+    } catch (error) {
+      console.error('Error deleting product:', error);
+      showNotification(`Failed to delete ${productName}: ${error.message}`, 'error');
+    } finally {
       setProductToDelete(null);
-
-      // Refetch products in ProductsSection
-      if (typeof refetchProducts === 'function') refetchProducts();
-    } catch (err) {
-      console.error('Error deleting product:', err);
-      showNotification(`Failed to delete product: ${err.response?.data?.message || err.message}`, 'error');
-      if (err.response?.status === 401) {
-        navigate('/login');
-      }
     }
   };
+
   const handleUpdate = async (id, updatedProduct, refetchProducts) => {
     try {
       const user = JSON.parse(localStorage.getItem('user'));
@@ -136,6 +124,7 @@ export default function ProductsPOS() {
       }
     }
   };
+  const openRegisterModal = () => setRegisterModalOpen(true);
   const extraButtons = [
     {
       label: "Register Product",
@@ -143,7 +132,7 @@ export default function ProductsPOS() {
       className: "inline-flex items-center bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg text-sm font-ginora transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/50",
       icon: (
         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-          <path fillRule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clipRule="evenodd" />
+          <path fillRule="evenodd" d="M10 5a1 1 0 011 1v3h3a 1 0 110 2h-3v3a 1 0 11-2 0v-3H6a 1 0 110-2h3V6a 1 0 011-1z" clipRule="evenodd" />
         </svg>
       )
     }
@@ -174,6 +163,8 @@ export default function ProductsPOS() {
     }
   }
 ];
+
+const clearFilters = () => setFilters({ category: '', availability: '', priceRange: '', location: '' });
 
   return (
     <div className="min-h-screen bg-gray-50">

@@ -33,36 +33,21 @@ apiClient.interceptors.request.use(
 
 // Response interceptor for handling token errors
 apiClient.interceptors.response.use(
-  (response) => {
-    return response;
-  },  async (error) => {
-    const originalRequest = error.config;
-    
-    // If error is 401 (Unauthorized) and we haven't tried to refresh token yet
-    if (error.response?.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true;
-      
-      // Try to refresh token - force refresh since we got a 401
+  (response) => response,
+  async (error) => {
+    if (error.response && error.response.status === 401) {
+      // Intentar refrescar el token si es posible
       const refreshed = await refreshTokenIfNeeded(true);
-      
       if (refreshed) {
-        // Update token in header
-        const newToken = localStorage.getItem('accessToken');
-        originalRequest.headers['Authorization'] = `Bearer ${newToken}`;
-        
-        // Retry the original request
+        // Reintentar la solicitud original
+        const originalRequest = error.config;
+        originalRequest.headers['Authorization'] = `Bearer ${localStorage.getItem('accessToken')}`;
         return apiClient(originalRequest);
+      } else {
+        // Redirigir al usuario a iniciar sesión si no se puede refrescar el token
+        localStorage.removeItem('accessToken');
+        window.location.href = '/login';
       }
-      
-      // If token refresh failed, redirect to login
-      console.log('Token refresh failed, redirecting to login');
-      
-      // To avoid potential redirect loops, clear storage
-      localStorage.removeItem('accessToken');
-      localStorage.removeItem('refreshToken');
-      
-      // Redirect to login page
-      window.location.href = '/login';
     }
     return Promise.reject(error);
   }
