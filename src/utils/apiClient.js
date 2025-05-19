@@ -1,6 +1,5 @@
 // API service for handling requests
 import axios from 'axios';
-import { refreshTokenIfNeeded } from './authUtils';
 
 const API_URL = 'http://localhost:3000/api';
 

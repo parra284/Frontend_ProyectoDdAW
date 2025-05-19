@@ -11,6 +11,7 @@ import MobilePanel from '../components/MobilePanel';
 import ShoppingCart from './ShoppingCart';
 import ProductDetailPage from './ProductDetailPage';
 import NotificationSystem, { showNotification } from '../components/NotificationSystem';
+import ProductsSection from './ProductsSection';
 
 const ProductsUser = () => {
   const [products, setProducts] = useState([]);
@@ -168,6 +169,9 @@ const ProductsUser = () => {
   };
 
   const handleSubmit = async () => {
+    console.log(selectedProducts);
+    
+
     if (selectedProducts.length === 0) {
       showNotification('Your cart is empty', 'warning');
       return;
@@ -270,6 +274,18 @@ const ProductsUser = () => {
   }
 
   const sortedProducts = getSortedProducts();
+
+  const cardButtons = [
+  {
+    label: "Add to Cart",
+    className: "flex-1 bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-300",
+    onClick: (product) => {
+      // Call handleUpdate with the current product's id and updated fields
+      handleProductSelection(product.id, 1);
+    },
+    canDisable: true,
+  }
+];
 
   return (
     <ResponsiveContainer className="p-4">
@@ -438,120 +454,13 @@ const ProductsUser = () => {
             </div>
           </div>
         )}
-
-        <div className="flex justify-between items-center mb-4 bg-blue-50 p-3 rounded-lg shadow-sm">
-          <p className="text-sm sm:text-base text-blue-700">
-            <span className="font-medium">{sortedProducts.length}</span> products found
-          </p>
-          <p className="text-sm text-blue-700">
-            <span className="font-medium">{sortedProducts.filter(p => (p.stockLevel || p.stock) > 0).length}</span> in stock
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
-          {sortedProducts.map((product) => {
-            const stockAmount = product.stockLevel || product.stock || 0;
-            return (
-              <div key={product.id} className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-200">
-                <div 
-                  className="relative cursor-pointer" 
-                  onClick={() => handleProductClick(product)}
-                >
-                  <img
-                    src={product.image || 'https://via.placeholder.com/300x200?text=No+Image'}
-                    alt={product.name || 'Product image'}
-                    className="w-full h-40 sm:h-48 object-cover"
-                    onError={(e) => {
-                      e.target.onerror = null;
-                      e.target.src = 'https://via.placeholder.com/300x200?text=No+Image';
-                    }}
-                  />
-                  {stockAmount <= 0 && (
-                    <div className="absolute top-0 right-0 bg-red-500 text-white text-xs font-bold px-2 py-1 m-2 rounded">
-                      OUT OF STOCK
-                    </div>
-                  )}
-                  {stockAmount > 0 && stockAmount <= 5 && (
-                    <div className="absolute top-0 right-0 bg-amber-500 text-white text-xs font-bold px-2 py-1 m-2 rounded">
-                      LOW STOCK
-                    </div>
-                  )}
-                </div>
-                <div className="p-4">
-                  <h2 
-                    className="text-lg font-semibold mb-2 line-clamp-2 cursor-pointer hover:text-primary"
-                    onClick={() => handleProductClick(product)}
-                  >
-                    {product.name}
-                  </h2>
-                  
-                  <div className="flex justify-between items-center mb-3">
-                    <p className="text-lg font-medium text-primary">${product.price}</p>
-                    <div className={`text-sm font-medium ${
-                      stockAmount === 0 ? 'text-red-600' : 
-                      stockAmount <= 5 ? 'text-amber-600' : 
-                      'text-green-600'
-                    }`}>
-                      {stockAmount === 0 ? 'Out of stock' : 
-                       stockAmount <= 5 ? `${stockAmount} left` : 
-                       `${stockAmount} in stock`}
-                    </div>
-                  </div>
-                  
-                  {product.category && (
-                    <div className="mb-3">
-                      <span className="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-md">
-                        {product.category}
-                      </span>
-                      {product.location && (
-                        <span className="inline-block bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded-md ml-2">
-                          {product.location}
-                        </span>
-                      )}
-                    </div>
-                  )}
-                  
-                  <p className="text-sm text-gray-600 mb-4 line-clamp-2 h-10">
-                    {product.description || 'No description available'}
-                  </p>
-                  
-                  <div className="flex space-x-2">
-                    <button
-                      className="flex-1 bg-blue-600 text-white px-3 py-2 rounded-md hover:bg-blue-700 transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      onClick={() => handleProductClick(product)}
-                    >
-                      View Details
-                    </button>
-                    {stockAmount > 0 && (
-                      <button
-                        className="flex-1 bg-green-600 text-white px-3 py-2 rounded-md hover:bg-green-700 transition duration-200 focus:outline-none focus:ring-2 focus:ring-green-500 flex items-center justify-center"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleProductSelection(product.id, 1);
-                        }}
-                      >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2 9m13-9l2 9m-5-9V6a2 2 0 10-4 0v7" />
-                        </svg>
-                        Add to Cart
-                      </button>
-                    )}
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-
-        {sortedProducts.length === 0 && (
-          <div className="text-center py-12 bg-gray-50 rounded-lg">
-            <svg xmlns="http://www.w3.org/2000/svg" className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
-            </svg>
-            <p className="mt-4 text-gray-500 text-lg font-medium">No products found</p>
-            <p className="text-gray-500">Try adjusting your search or filter criteria</p>
-          </div>
-        )}
+          <ProductsSection 
+          filters={filters}
+          searchQuery={searchQuery}
+          cardButtons={cardButtons}
+          onProductsLoaded={setProducts}
+          />
+        
       </div>
       <ResponsiveHelper enabled={true} />
     </ResponsiveContainer>

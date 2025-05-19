@@ -11,8 +11,8 @@ import { deleteProduct as deleteProductApi, updateProduct as updateProductApi, r
 export default function ProductsPOS() {
   const [searchQuery, setSearchQuery] = useState('');
   const [filters, setFilters] = useState({ category: '', availability: '', priceRange: '', location: '' });
+  const [selectedProduct, setSelectedProduct] = useState(null);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-  const [productToDelete, setProductToDelete] = useState(null);
   const [registerModalOpen, setRegisterModalOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -33,8 +33,6 @@ export default function ProductsPOS() {
   ];
 
   const handleSearch = (e) => {
-    console.log(e);
-    
     setSearchQuery(e.target.value);
   };
 
@@ -43,35 +41,50 @@ export default function ProductsPOS() {
     setFilters((prevFilters) => ({ ...prevFilters, [name]: value }));
   };
 
-  const closeRegisterModal = () => setRegisterModalOpen(false);
-
   const initiateProductDelete = (product) => {
-    setProductToDelete(product);
+    setSelectedProduct(product);
     setDeleteModalOpen(true);
   };
 
   const cancelDelete = () => {
-    setProductToDelete(null);
+    setSelectedProduct(null);
     setDeleteModalOpen(false);
+  };
+
+  const initiateProductUpdate = (product) => {
+    setSelectedProduct(product);
+    setRegisterModalOpen(true);
   };
 
   // These handlers only handle API and notifications, not product state
   const handleDelete = async (reason, refetchProducts) => {
-    if (!productToDelete) return;
+    if (!selectedProduct) return;
 
-    const id = productToDelete.id;
-    const productName = productToDelete.name;
+    const id = selectedProduct.id;
+    const productName = selectedProduct.name;
     setDeleteModalOpen(false);
 
     try {
       await deleteProductApi(id);
-      showNotification(`${productName} deleted successfully.`, 'success');
-      if (refetchProducts) refetchProducts(); // Refresh the product list
-    } catch (error) {
-      console.error('Error deleting product:', error);
-      showNotification(`Failed to delete ${productName}: ${error.message}`, 'error');
-    } finally {
-      setProductToDelete(null);
+
+      // Get user from localStorage
+      const user = JSON.parse(localStorage.getItem('user'));
+      const userId = user?.id || '1';
+
+      // Log the deletion to the audit system
+      await logProductDeletion(userId, selectedProduct, reason);
+
+      showNotification(`Product "${productName}" removed successfully!`, 'success');
+      setSelectedProduct(null);
+
+      // Refetch products in ProductsSection
+      if (typeof refetchProducts === 'function') refetchProducts();
+    } catch (err) {
+      console.error('Error deleting product:', err);
+      showNotification(`Failed to delete product: ${err.response?.data?.message || err.message}`, 'error');
+      if (err.response?.status === 401) {
+        navigate('/login');
+      }
     }
   };
 
@@ -139,20 +152,12 @@ export default function ProductsPOS() {
   ];  const cardButtons = [
   {
     label: "Update",
-    className: "flex-1 bg-primary hover:bg-primary/90 text-white px-3 py-1 rounded-lg text-sm font-ginora transition-colors focus:outline-none focus:ring-2 focus:ring-primary/50",
-    onClick: (product, refetchProducts) => {
-      // Include all relevant product fields to ensure a complete update
-      handleUpdate(product.id, {
-        name: product.name,
-        description: product.description,
-        price: product.price,
-        stock: product.stock,
-        category: product.category,
-        location: product.location,
-        lowStockThreshold: product.lowStockThreshold,
-        sku: product.sku
-      }, refetchProducts);
-    }
+    className: "flex-1 bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-300",
+    onClick: (product) => {
+      // Call handleUpdate with the current product's id and updated fields
+      initiateProductUpdate(product);
+    },
+    canDisable: false
   },
   {
     label: "Delete",
@@ -160,7 +165,8 @@ export default function ProductsPOS() {
     onClick: (product) => {
       // Call initiateProductDelete with the current product
       initiateProductDelete(product);
-    }
+    },
+    canDisable: false
   }
 ];
 
@@ -176,15 +182,26 @@ const clearFilters = () => setFilters({ category: '', availability: '', priceRan
         {/* Register Product Modal */}
         <RegisterProductModal
           isOpen={registerModalOpen}
-          onCancel={closeRegisterModal}
-          // Pass handler and let ProductsSection provide refetchProducts callback
-          onConfirm={(newProduct, refetchProducts) => handleRegisterProduct(newProduct, refetchProducts)}
+          onCancel={() => {
+            setRegisterModalOpen(false);
+            setSelectedProduct(null);
+          }}
+          selectedProduct={selectedProduct}
+          onConfirm={async (productData, productId) => {
+            if (productId) {
+              await handleUpdate(productId, productData, refetchProducts => refetchProducts && refetchProducts());
+            } else {
+              await handleRegisterProduct(productData, refetchProducts => refetchProducts && refetchProducts());
+            }
+            setSelectedProduct(null); // clear after either action
+            setRegisterModalOpen(false);
+          }}
         />
 
         {/* Delete confirmation modal */}
         <DeleteConfirmationModal
           isOpen={deleteModalOpen}
-          product={productToDelete}
+          product={selectedProduct}
           onCancel={cancelDelete}
           // Pass handler and let ProductsSection provide refetchProducts callback
           onConfirm={(reason, refetchProducts) => handleDelete(reason, refetchProducts)}

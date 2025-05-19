@@ -1,8 +1,4 @@
-export default function ProductCard({
-  product,
-  setProducts,
-  cardButtons
-}) {
+export default function ProductCard({ product, cardButtons }) {
   return (
     <div className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition duration-200">
       <div className="relative">
@@ -10,7 +6,7 @@ export default function ProductCard({
           src={product.image || null} 
           alt={product.name || 'No image available'} 
           className="w-full h-40 sm:h-48 object-cover" 
-          onError={(e) => {e.target.onerror = null; e.target.src = 'https://via.placeholder.com/300x200?text=No+Image'}}
+          onError={(e) => {e.target.onerror = null; e.target.src = 'https://via.placeholder.com/300x200?text=No+Image'}} 
         />
         <div className="absolute top-2 right-2 bg-primary text-white text-xs px-2 py-1 rounded-full">
           {product.category}
@@ -31,50 +27,14 @@ export default function ProductCard({
             </span>
           </div>
         </div>
-        <div className="text-sm font-ginora mb-3">
-          <span className="block text-gray-500">Location</span>
-          <span className="font-medium text-gray-700">{product.location}</span>
-        </div>
-        <div className="mt-3 border-t pt-3">
-          <div className="space-y-3">
-            <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1 font-ginora">Update Price ($)</label>
-              <input
-                type="number"
-                className="w-full p-1.5 text-sm border rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
-                value={product.price}
-                onChange={(e) =>
-                  setProducts((prevProducts) =>
-                    prevProducts.map((p) =>
-                      p.id === product.id ? { ...p, price: parseFloat(e.target.value) } : p
-                    )
-                  )
-                }
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1 font-ginora">Update Stock</label>
-              <input
-                type="number"
-                className="w-full p-1.5 text-sm border rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
-                value={product.stock}
-                onChange={(e) =>
-                  setProducts((prevProducts) =>
-                    prevProducts.map((p) =>
-                      p.id === product.id ? { ...p, stock: parseInt(e.target.value, 10) } : p
-                    )
-                  )
-                }
-              />
-            </div>
-          </div>
-        </div>
+        
         <div className="mt-3 flex flex-col sm:flex-row sm:space-x-2 space-y-2 sm:space-y-0">
           {cardButtons && cardButtons.map((btn, idx) => (
             <button
               key={idx}
-              className={`${btn.className} font-ginora rounded-lg`}
-              onClick={() => btn.onClick(product, setProducts)}
+              disabled={product.stock == 0 && btn.canDisable}
+              className={`${btn.className} ${product.stock == 0 && btn.canDisable ? "!bg-gray-500"  : ""}`}
+              onClick={() => btn.onClick(product)}
               type="button"
             >
               {btn.icon}

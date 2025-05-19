@@ -3,7 +3,7 @@ import ProductCard from "../components/ProductCard";
 import Button from "../components/Button"
 import { fetchProducts as fetchProductsService, registerProduct, deleteProduct } from './productsService';
 
-export default function ProductsSection({ filters, searchQuery, extraButtons, cardButtons }) {
+export default function ProductsSection({ filters, searchQuery, extraButtons = [], cardButtons, onProductsLoaded }) {
   const itemsPerPage = 5;
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -21,11 +21,12 @@ export default function ProductsSection({ filters, searchQuery, extraButtons, ca
         console.log(filters);
         console.log(searchQuery);
         
-        
         const products = await fetchProductsService(filters, searchQuery);
-        console.log(products);
         
         setProducts(products);
+        if (onProductsLoaded) {
+          onProductsLoaded(products);
+        }
         setError(null);
         setCurrentPage(1);
       } catch (err) {
@@ -118,16 +119,95 @@ export default function ProductsSection({ filters, searchQuery, extraButtons, ca
     }
   };
 
-  // Filtering (if needed, but API already filters)
-  const filteredProducts = products;
-  
+  const handleRegisterProduct = async (newProduct) => {
+    try {
+      await registerProduct(newProduct);
+      alert('Product registered successfully!');
+      // Actualizar la lista de productos
+      const updatedProducts = await fetchProductsService(filters, searchQuery);
+      setProducts(updatedProducts);
+    } catch (error) {
+      console.error('Error registering product:', error);
+      alert('Failed to register product.');
+    }
+  };
+
+  const handleDeleteProduct = async (productId) => {
+    try {
+      await deleteProduct(productId);
+      alert('Product deleted successfully!');
+      // Actualizar la lista de productos
+      const updatedProducts = await fetchProductsService(filters, searchQuery);
+      setProducts(updatedProducts);
+    } catch (error) {
+      console.error('Error deleting product:', error);
+      alert('Failed to delete product.');
+    }
+  };
+
+  // Function to handle adding products to the cart
+  const handleAddToCart = (product) => {
+    const user = JSON.parse(localStorage.getItem('user')) || {};
+    const { name, lastName, email } = user;
+
+    const cartItem = {
+      ...product,
+      user: { name, lastName, email },
+      quantity: 1, // Default quantity
+    };
+
+    setCart((prevCart) => {
+      const existingItem = prevCart.find((item) => item.id === product.id);
+      if (existingItem) {
+        return prevCart.map((item) =>
+          item.id === product.id
+            ? { ...item, quantity: item.quantity + 1 }
+            : item
+        );
+      }
+      return [...prevCart, cartItem];
+    });
+  };
+
+  // Function to handle payment
+  const handlePayment = async () => {
+    if (cart.length === 0) {
+      alert('Your cart is empty.');
+      return;
+    }
+
+    try {
+      const response = await fetch('http://localhost:3000/api/orders', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          products: cart,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to initiate payment.');
+      }
+
+      const { paymentLink, orderId } = await response.json();
+      setOrderId(orderId);
+      window.location.href = paymentLink; // Redirect to PayU
+    } catch (error) {
+      console.error('Payment error:', error);
+      alert('Failed to initiate payment. Please try again.');
+    }
+  };
+
+  console.log(products);
 
   // Pagination
-  const paginatedProducts = filteredProducts.slice(
+  const paginatedProducts = products.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
-  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+  const totalPages = Math.ceil(products.length / itemsPerPage);
 
   if (loading) {
     return (
@@ -161,8 +241,8 @@ export default function ProductsSection({ filters, searchQuery, extraButtons, ca
   return (
     <div className="lg:w-3/4 p-4 sm:p-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
-        <h1 className="text-xl sm:text-2xl font-bebas text-primary mb-2 sm:mb-0">
-          Products ({filteredProducts.length})
+        <h1 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-0">
+          Products ({products.length})
         </h1>
         <div className="flex flex-row gap-2">
           {extraButtons && extraButtons.map((btn, idx) => (
@@ -202,9 +282,7 @@ export default function ProductsSection({ filters, searchQuery, extraButtons, ca
           </button>
         </div>
       </div>
-
-      {/* Existing Product List */}
-      {filteredProducts.length === 0 ? (
+      {products.length === 0 ? (
         <div className="bg-gray-50 p-6 text-center rounded-md border border-gray-200">
           <p className="text-gray-500">No products found matching your criteria.</p>
         </div>
@@ -214,16 +292,8 @@ export default function ProductsSection({ filters, searchQuery, extraButtons, ca
             <ProductCard
               key={product.id}
               product={product}
-              setProducts={setProducts}
-              cardButtons={cardButtons}
-            >
-              <button
-                className="bg-green-600 text-white px-3 py-2 rounded-md hover:bg-green-700 transition duration-200 focus:outline-none focus:ring-2 focus:ring-green-500"
-                onClick={() => handleAddToCart(product)}
-              >
-                Add to Cart
-              </button>
-            </ProductCard>
+              cardButtons={cardButtons} // <-- pass down
+            />
           ))}
         </div>
       )}
