@@ -59,7 +59,8 @@ export default function RegisterProductModal({ isOpen, onCancel, onConfirm, sele
             value={form.name}
             onChange={handleChange}
             required
-          />          <input
+          />         
+          <input
             name="price"
             type="number"
             placeholder="Price"
@@ -68,7 +69,8 @@ export default function RegisterProductModal({ isOpen, onCancel, onConfirm, sele
             onChange={handleChange}
             required
             min="0"
-          />          <input
+          />          
+          <input
             name="stock"
             type="number"
             placeholder="Stock"
@@ -77,7 +79,8 @@ export default function RegisterProductModal({ isOpen, onCancel, onConfirm, sele
             onChange={handleChange}
             required
             min="0"
-          />          <select
+          />          
+          <select
             name="category"
             className="w-full p-2 border rounded-lg font-ginora focus:ring-2 focus:ring-primary focus:border-primary"
             value={form.category}
@@ -85,10 +88,10 @@ export default function RegisterProductModal({ isOpen, onCancel, onConfirm, sele
             required
           >
             <option value="">Select Category</option>
-            <option value="electronics">Electronics</option>
-            <option value="clothing">Clothing</option>
-            <option value="home">Home</option>
-          </select>          <select
+            <option value="cafeteria">Cafeteria</option>
+            <option value="almuerzos">Almuerzos</option>
+          </select>          
+          <select
             name="location"
             className="w-full p-2 border rounded-lg font-ginora focus:ring-2 focus:ring-primary focus:border-primary"
             value={form.location}

@@ -12,7 +12,8 @@ import Orders from "./orders/Orders";
 const routes = [
   { path: '/', element: <Navigate to="/login" replace /> },
   { path: '/signup', element: <SignUp /> },
-  { path: '/login', element: <LogIn /> },  { 
+  { path: '/login', element: <LogIn /> },  
+  { 
     path: '/products', 
     element: <ProtectedRoute elements={[<ProductsPOS />, <ProductsUser />]} roles={['POS','user']}/> 
   },

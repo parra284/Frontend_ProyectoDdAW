@@ -25,7 +25,7 @@ export default function ProductsFilters({ searchQuery, handleSearch, filters, ha
         name="category"
         value={filters.category}
         onChange={handleFilterChange}
-        options={["electronics", "clothing", "home"]}
+        options={["cafeteria","almuerzos"]}
       />
       <SelectFilter
         label="Availability"

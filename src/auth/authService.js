@@ -12,6 +12,7 @@ export async function signUp(data) {
 export async function login(data) {
   try {
     const response = await apiClient.post('/auth/login', data);
+    console.log(response);
     
     // Store tokens in localStorage
     if (response.data.accessToken) {

@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import apiClient from "../utils/apiClient";
 import Navbar from "../components/Navbar";
+import { useNavigate } from "react-router-dom";
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchOrders = async () => {
