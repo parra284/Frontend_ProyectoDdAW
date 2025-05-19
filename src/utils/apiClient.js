@@ -1,7 +1,7 @@
 // API service for handling requests
 import axios from 'axios';
 
-const API_URL = 'http://localhost:3000/api';
+const API_URL = 'https://back-db.vercel.app/api';
 
 // Create axios instance with baseURL
 const apiClient = axios.create({
