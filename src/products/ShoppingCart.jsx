@@ -1,7 +1,7 @@
-import { useMemo, useCallback } from "react";
+import { useMemo } from "react";
 
 const ShoppingCart = ({ products, selectedProducts, setSelectedProducts, onSubmit }) => {
-  const getProductById = useCallback((id) => products.find((p) => p.id === id), [products]);
+  const getProductById = (id) => products.find((p) => p.id === id);
   const getProductStock = (id) => getProductById(id)?.stock || 0;
 
   const handleCartQuantityChange = (productId, newQuantity) => {
@@ -27,7 +27,7 @@ const ShoppingCart = ({ products, selectedProducts, setSelectedProducts, onSubmi
 
   return (
     <>
-      <h2 className="text-xl font-bold mb-4 text-primary font-bebas">Shopping Cart</h2>
+      <h2 className="text-xl font-bold mb-4">Shopping Cart</h2>
       {selectedProducts.length === 0 ? (
         <p className="text-gray-500">Your cart is empty.</p>
       ) : (
@@ -39,12 +39,12 @@ const ShoppingCart = ({ products, selectedProducts, setSelectedProducts, onSubmi
               return (
                 <li key={item.productId} className="flex items-center justify-between py-2 border-b">
                   <div>
-                    <span className="font-medium text-primary">{product.name}</span>
-                    <div className="text-xs text-secondary">${product.price} x</div>
+                    <span className="font-medium">{product.name}</span>
+                    <div className="text-xs text-gray-500">${product.price} x</div>
                   </div>
                   <div className="flex items-center space-x-2">
                     <button
-                      className="px-2 py-1 bg-secondary text-white rounded hover:bg-tertiary"
+                      className="px-2 py-1 bg-gray-200 rounded"
                       onClick={() => handleCartQuantityChange(item.productId, item.quantity - 1)}
                       disabled={item.quantity <= 1}
                     >
@@ -58,7 +58,7 @@ const ShoppingCart = ({ products, selectedProducts, setSelectedProducts, onSubmi
                       onChange={(e) =>
                         handleCartQuantityChange(item.productId, Number(e.target.value))
                       }
-                      className="w-12 text-center border rounded border-primary focus:ring-primary"
+                      className="w-12 text-center border rounded"
                     />
                     <button
                       className="px-2 py-1 bg-gray-200 rounded"

@@ -1,7 +1,7 @@
 const MobilePanel = ({ children, onClose }) => {
   return (
-    <div className="fixed right-0 top-0 z-40 flex justify-end mt-15">
-      <div className="w-full max-w-sm bg-white h-screen shadow-lg p-6 overflow-y-auto relative">
+    <div className="fixed inset-0 bg-black bg-opacity-30 z-40 flex justify-end mt-15">
+      <div className="w-full max-w-sm bg-white h-full shadow-lg p-6 overflow-y-auto relative">
         <button
           className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
           onClick={onClose}

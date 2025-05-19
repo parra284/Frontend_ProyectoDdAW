@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import DeleteConfirmationModal from '../components/DeleteConfirmationModal';
 import RegisterProductModal from '../components/RegisterProductModal';
+import { logProductDeletion } from '../utils/auditLogger';
 import { showNotification } from '../components/NotificationSystem';
 import Sidebar from '../components/Sidebar';
 import ProductsSection from './ProductsSection';
@@ -16,19 +17,14 @@ export default function ProductsPOS() {
   const [registerModalOpen, setRegisterModalOpen] = useState(false);
   const navigate = useNavigate();
 
-  const user = JSON.parse(localStorage.getItem('user')) || {}; // Retrieve user info
-  const userRole = user.role || 'guest'; // Default to 'guest' if no role is found;
-
   const buttons = [
     {
       label: "Products",
-      path: "/products",
-      roles: ["POS", "user"]
+      action: () => navigate("/products")
     },
     {
       label: "Orders",
-      path: "/orders",
-      roles: ["POS"]
+      action: () => navigate("/orders")
     },
   ];
 
@@ -90,17 +86,6 @@ export default function ProductsPOS() {
 
   const handleUpdate = async (id, updatedProduct, refetchProducts) => {
     try {
-      const user = JSON.parse(localStorage.getItem('user'));
-      console.log('User role:', user?.role);
-      
-      // Check if user is authenticated before making API call
-      const accessToken = localStorage.getItem('accessToken');
-      if (!accessToken) {
-        showNotification('You must be logged in to update products.', 'error');
-        navigate('/login');
-        return;
-      }
-
       const response = await updateProductApi(id, updatedProduct);
       if (response.status === 200) {
         showNotification('Product updated successfully!', 'success');
@@ -109,10 +94,8 @@ export default function ProductsPOS() {
     } catch (error) {
       console.error('Error updating product:', error);
       if (error.response && error.response.status === 401) {
-        // The interceptor in apiClient should handle the 401 and redirect if token refresh fails
-        // But we'll add this as a backup
         showNotification('Authentication required. Please log in again.', 'error');
-        // Don't navigate here, let the apiClient interceptor handle it
+        navigate('/login');
       } else if (error.response && error.response.status === 403) {
         showNotification('You do not have permission to update products.', 'error');
       } else {
@@ -137,19 +120,21 @@ export default function ProductsPOS() {
       }
     }
   };
-  const openRegisterModal = () => setRegisterModalOpen(true);
+
+  const clearFilters = () => {
+    setFilters({ category: '', availability: '', priceRange: '', location: '' });
+    setSearchQuery('')
+  }
+
   const extraButtons = [
     {
       label: "Register Product",
-      onClick: openRegisterModal,
-      className: "inline-flex items-center bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg text-sm font-ginora transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/50",
-      icon: (
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-          <path fillRule="evenodd" d="M10 5a1 1 0 011 1v3h3a 1 0 110 2h-3v3a 1 0 11-2 0v-3H6a 1 0 110-2h3V6a 1 0 011-1z" clipRule="evenodd" />
-        </svg>
-      )
+      onClick: () => setRegisterModalOpen(true),
+      className: "inline-flex items-center bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-green-300"
     }
-  ];  const cardButtons = [
+  ];
+
+  const cardButtons = [
   {
     label: "Update",
     className: "flex-1 bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-blue-300",
@@ -161,7 +146,7 @@ export default function ProductsPOS() {
   },
   {
     label: "Delete",
-    className: "flex-1 bg-secondary hover:bg-secondary/90 text-white px-3 py-1 rounded-lg text-sm font-ginora transition-colors focus:outline-none focus:ring-2 focus:ring-secondary/50",
+    className: "flex-1 bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-red-300",
     onClick: (product) => {
       // Call initiateProductDelete with the current product
       initiateProductDelete(product);
@@ -170,12 +155,10 @@ export default function ProductsPOS() {
   }
 ];
 
-const clearFilters = () => setFilters({ category: '', availability: '', priceRange: '', location: '' });
-
   return (
     <div className="min-h-screen bg-gray-50">
-      <Navbar buttons={buttons} userRole={userRole} />
-      <div className="max-w-7xl mx-auto">
+      <Navbar buttons={buttons} />
+      <div className="max-w-7xl mx-auto mt-15">
         {/* Notification element - hidden by default */}
         <div id="notification" style={{ display: 'none' }} className="fixed bottom-4 right-4 bg-green-600 text-white px-6 py-3 rounded shadow-lg"></div>
 

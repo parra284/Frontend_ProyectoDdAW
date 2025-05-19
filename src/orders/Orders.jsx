@@ -24,6 +24,26 @@ const Orders = () => {
     fetchOrders();
   }, []);
 
+  const confirmOrder = async (id) => {
+    try {
+      const response = await apiClient.patch(`/orders/${id}/status`,
+        {
+          status: "confirmed"
+        }
+      );
+
+      setOrders((prevOrders) =>
+        prevOrders.map((order) =>
+          order.id === id ? { ...order, status: response.data.order.status } : order
+        )
+      );
+
+    } catch (error) {
+      console.error("Failed to confirm order:", error);
+      alert("Failed to confirm order");
+    }
+  }
+
   const buttons = [
     {
       label: "Products",
@@ -43,6 +63,7 @@ const Orders = () => {
       <Navbar 
       buttons={buttons}
       />
+      <div className="mt-15">
       {orders.length === 0 && <p>No orders found.</p>}
       {orders.map((order) => (
         <div
@@ -85,7 +106,7 @@ const Orders = () => {
             {order.status === "pending" && (
               <button
                 className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
-                onClick={() => alert(`Confirming order ${order.id}`)}
+                onClick={() => confirmOrder(order.id)}
               >
                 Confirm
               </button>
@@ -93,6 +114,7 @@ const Orders = () => {
           </div>
         </div>
       ))}
+      </div>
     </div>
   );
 };
